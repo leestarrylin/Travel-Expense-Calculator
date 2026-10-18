@@ -1,1783 +1,247 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="81A2yLGz90U0vg7sSC5POF">
-<head data-page-node-id="oyZY3GWAlIa2Jsn722nTCa">
-<meta charset="utf-8" data-page-node-id="4BCESgKemUt0n4a5SwC8LO">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" data-page-node-id="yFNVEBuu2lWfEbQXRNOgg6">
-<meta name="color-scheme" content="light" data-page-node-id="eJddRt0qS5I37jpFgFNUjX">
-<meta name="theme-color" content="#3b6ef6" data-page-node-id="e6hMfF11j2cp7bPCGL4tbX">
-<meta name="apple-mobile-web-app-capable" content="yes" data-page-node-id="DiBxRYfHocGeHRBNCzlm2i">
-<meta name="mobile-web-app-capable" content="yes" data-page-node-id="XKIQauUxQgAMD1TkbO3UkA">
-<meta name="apple-mobile-web-app-status-bar-style" content="default" data-page-node-id="El5iUqCEBYBa3syNxkE0wq">
-<meta name="apple-mobile-web-app-title" content="旅行记账" data-page-node-id="GpWMKTj9s8FYyMUpXEDYgL">
-<meta name="format-detection" content="telephone=no" data-page-node-id="0ANODm9CAAPJkuXdDsiShW">
-<link rel="manifest" href="./manifest.webmanifest" data-page-node-id="vuTVAtQS4icKLqouvlXnCn">
-<link rel="apple-touch-icon" href="./icon-192.png" data-page-node-id="7wqVrmjdD8D7Kg2VrEGhRE">
-<title>旅行记账 · 两人分摊</title>
-<style>
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0}
-  :root{
-    --bg:#f2f4f9;--card:#fff;--text:#0f172a;--muted:#667085;--line:#e9edf5;
-    --primary:#3b6ef6;--primary-d:#2f5fe0;--teal:#12b3a0;--danger:#e5484d;
-    --r:18px;--nav-h:58px;
-    --sh:0 1px 2px rgba(16,24,40,.04),0 10px 24px -18px rgba(16,24,40,.45);
-  }
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    color:var(--text);font-size:15px;line-height:1.5;background:var(--bg);
-    -webkit-font-smoothing:antialiased;overscroll-behavior-y:contain;
-  }
-  body.lock{overflow:hidden}
-  input,select,button,textarea{font-family:inherit}
-  button{cursor:pointer}
-  #app{
-    max-width:520px;margin:0 auto;position:relative;min-height:100vh;min-height:100dvh;
-    padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 96px);
-    background:var(--bg);
-  }
-  @media(min-width:560px){
-    body{background:#e6eaf2}
-    #app{box-shadow:0 0 0 1px rgba(15,23,42,.06),0 40px 80px -40px rgba(15,23,42,.3)}
-  }
-
-  /* ---------- 顶栏 ---------- */
-  .topbar{
-    position:sticky;top:0;z-index:20;padding:14px 18px 10px;
-    background:rgba(242,244,249,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    display:flex;align-items:center;gap:12px;
-  }
-  .tb-title{font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.2;
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .tb-sub{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .tb-right{margin-left:auto;display:flex;gap:8px;flex:none}
-  .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#fff;
-            display:grid;place-items:center;color:#475467;transition:.15s}
-  .icon-btn:active{transform:scale(.94);background:#f6f8fc}
-
-  /* ---------- 视图 ---------- */
-  .view{display:none;padding:0 14px}
-  .view.active{display:block;animation:fade .22s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-  /* ---------- 主卡 ---------- */
-  .hero{
-    position:relative;overflow:hidden;border-radius:22px;padding:20px 20px 18px;color:#fff;
-    background:linear-gradient(125deg,#1c3b8f 0%,#3b6ef6 52%,#14b8a6 100%);
-    box-shadow:0 18px 36px -24px rgba(29,78,216,.9);
-  }
-  .hero::after{content:"";position:absolute;right:-60px;top:-80px;width:220px;height:220px;border-radius:50%;
-    background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0) 70%);pointer-events:none}
-  .hero-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
-  .hero-label{font-size:11.5px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.72)}
-  .hero-cur{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);color:#fff;
-            font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px}
-  .hero-amount{font-size:40px;font-weight:800;letter-spacing:-.035em;line-height:1.1;margin-top:6px;
-               font-variant-numeric:tabular-nums;position:relative;z-index:1}
-  .hero-meta{font-size:12.5px;color:rgba(255,255,255,.8);margin-top:5px;position:relative;z-index:1}
-  .hero-settle{
-    margin-top:15px;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.15);
-    border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:11px 14px;position:relative;z-index:1;
-    font-size:13.5px;font-weight:600;
-  }
-  .hero-settle .arrow{opacity:.7;font-weight:400}
-  .hero-settle b{margin-left:auto;font-size:15px;font-variant-numeric:tabular-nums}
-  .hero-settle.ok{background:rgba(255,255,255,.12)}
-
-  /* ---------- 筛选 ---------- */
-  .filter-row{display:flex;gap:7px;overflow-x:auto;padding:14px 2px 4px;margin:0 -2px;
-              scrollbar-width:none;-webkit-overflow-scrolling:touch;
-              -webkit-mask-image:linear-gradient(to right,#000 94%,rgba(0,0,0,.15));
-              mask-image:linear-gradient(to right,#000 94%,rgba(0,0,0,.15))}
-  .filter-row::-webkit-scrollbar{display:none}
-  .fchip{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
-         font-size:12.5px;font-weight:600;color:#5a6b85;transition:.15s;white-space:nowrap}
-  .fchip.on{background:#eef3ff;border-color:#b9cdfb;color:#1d4ed8}
-
-  /* ---------- 明细 ---------- */
-  .day-head{display:flex;justify-content:space-between;align-items:center;padding:16px 4px 8px;
-            font-size:12px;font-weight:700;color:#8b97a8}
-  .day-head b{color:#5a6b85;font-variant-numeric:tabular-nums}
-  .item-wrap{position:relative;overflow:hidden;border-radius:16px;margin-bottom:8px;background:#fff;
-              box-shadow:0 1px 2px rgba(16,24,40,.04)}
-  .item-del{position:absolute;right:0;top:0;bottom:0;width:88px;border:0;background:var(--danger);color:#fff;
-            font-size:13px;font-weight:700}
-  .item{
-    position:relative;display:flex;align-items:center;gap:12px;background:#fff;padding:12px 14px;
-    border-radius:16px;will-change:transform;transition:transform .22s cubic-bezier(.2,.8,.2,1);
-  }
-  .item:active{background:#fafbfe}
-  .item-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:19px;flex:none}
-  .item-body{flex:1;min-width:0}
-  .item-title{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .item-sub{font-size:11.5px;color:#8b97a8;margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:nowrap;
-            overflow:hidden;white-space:nowrap}
-  .tag{background:#f3f6fc;border-radius:5px;padding:1.5px 6px;font-size:10.5px;font-weight:700;color:#5a6b85;flex:none}
-  .tag.a{background:#eef3ff;color:#2f5fe0}
-  .tag.b{background:#e6faf5;color:#0b9c88}
-  .item-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;flex:none;line-height:1.3}
-  .item-amt small{display:block;font-weight:500;color:#a2adbd;font-size:10.5px;margin-top:1px}
-  .empty{padding:56px 20px;text-align:center;color:#a2adbd}
-  .empty .ico{font-size:38px;opacity:.5;margin-bottom:10px}
-  .empty p{margin:0;font-size:13.5px}
-
-  /* ---------- 统计 ---------- */
-  .card{background:var(--card);border-radius:var(--r);padding:16px 16px 18px;box-shadow:var(--sh);margin-bottom:14px}
-  .card-h{font-size:14px;font-weight:700;margin:0 0 14px;display:flex;align-items:center;gap:7px}
-  .card-h .sub{font-size:11.5px;color:#a2adbd;font-weight:500;margin-left:auto}
-  .bar-row{margin-bottom:13px}
-  .bar-row:last-child{margin-bottom:0}
-  .bar-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px;gap:10px}
-  .bar-top span{color:#475467;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bar-top b{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
-  .bar-top em{font-style:normal;color:#a2adbd;font-weight:500;font-size:11px;margin-left:5px}
-  .bar-track{height:8px;background:#f1f4fa;border-radius:99px;overflow:hidden}
-  .bar-track i{display:block;height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
-  .daychart{display:flex;align-items:flex-end;gap:6px;height:110px;padding-top:8px}
-  .dc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
-  .dc-bar{width:100%;max-width:26px;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg,#6d95fb,#3b6ef6);
-          min-height:3px;transition:height .4s ease}
-  .dc-lab{font-size:9.5px;color:#a2adbd;white-space:nowrap;transform:scale(.92)}
-  .cmp-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px}
-  .cmp-row .nm{width:52px;font-weight:700;color:#475467;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .cmp-bar{flex:1;height:20px;background:#f3f6fc;border-radius:6px;position:relative;overflow:hidden}
-  .cmp-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}
-  .cmp-row .vv{width:78px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:12px;flex:none}
-  .cur-list{display:flex;flex-wrap:wrap;gap:8px}
-  .cur-pill{background:#f6f9ff;border:1px solid #e8eefa;border-radius:11px;padding:8px 12px;font-size:11.5px;color:#5a6b85}
-  .cur-pill b{display:block;color:#0f172a;font-size:14px;font-variant-numeric:tabular-nums;margin-top:1px;font-weight:700}
-
-  /* ---------- 结算 ---------- */
-  .settle-big{text-align:center;padding:26px 18px 22px}
-  .settle-big .lbl{font-size:12px;font-weight:700;letter-spacing:.14em;color:#a2adbd}
-  .settle-flow{font-size:17px;font-weight:700;margin-top:12px;color:#475467}
-  .settle-amt{font-size:44px;font-weight:800;letter-spacing:-.035em;margin:4px 0 2px;
-              font-variant-numeric:tabular-nums;color:var(--primary-d)}
-  .settle-amt.ok{color:#0b9c88;font-size:30px;margin-top:12px}
-  .settle-hint{font-size:12.5px;color:#8b97a8;margin-top:8px}
-  .mcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-  .mcard{background:#fff;border-radius:16px;padding:14px;box-shadow:var(--sh)}
-  .mcard .n{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:10px}
-  .mcard .n i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;
-              font-style:normal;font-weight:800;color:#fff;flex:none}
-  .mcard.a .n i{background:linear-gradient(135deg,#4b7bfa,#2f5fe0)}
-  .mcard.b .n i{background:linear-gradient(135deg,#22c1a4,#0b9c88)}
-  .mcard .r{display:flex;justify-content:space-between;font-size:11.5px;color:#8b97a8;padding:2.5px 0;gap:6px}
-  .mcard .r b{color:#0f172a;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
-  .mcard .r.net{border-top:1px solid #f0f3f9;margin-top:6px;padding-top:8px}
-  .mcard .r.net b.pos{color:#0b9c88}
-  .mcard .r.net b.neg{color:#e5484d}
-  .btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:1px solid var(--line);
-       background:#fff;border-radius:14px;padding:13px;font-size:14.5px;font-weight:700;color:#344054;
-       transition:.15s}
-  .btn:active{transform:scale(.985);background:#f7f9fd}
-  .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;
-               box-shadow:0 10px 22px -14px rgba(59,110,246,.95)}
-  .btn.primary:active{background:var(--primary-d)}
-  .btn.danger{color:var(--danger);border-color:#f6d7d6}
-  .btn.danger:active{background:#fef4f3}
-  .btn.sm{padding:10px;font-size:13px;border-radius:11px}
-  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .note{font-size:11.5px;color:#a2adbd;line-height:1.7;margin-top:10px}
-
-  /* ---------- 设置 ---------- */
-  .set-group{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
-  .set-group .gh{font-size:11.5px;font-weight:700;color:#8b97a8;letter-spacing:.08em;padding:14px 16px 8px;
-                 background:#fff}
-  .set-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid #f2f5fa;min-height:52px}
-  .set-row:first-of-type{border-top:0}
-  .set-row label{font-size:14px;font-weight:600;color:#344054;flex:none;width:84px}
-  .set-row input[type=text],.set-row input[type=date],.set-row select{
-    flex:1;min-width:0;border:0;background:transparent;text-align:right;font-size:14px;color:#0f172a;
-    padding:6px 0;outline:none;appearance:none;-webkit-appearance:none;font-family:inherit
-  }
-  .set-row input:focus{color:var(--primary)}
-  .set-row .tail{flex:none;color:#c2cad6;font-size:13px}
-  .cur-row{display:grid;grid-template-columns:1fr 108px 34px;gap:8px;align-items:center;padding:9px 16px;
-           border-top:1px solid #f2f5fa}
-  .cur-row select{border:0;background:transparent;font-size:14px;color:#0f172a;appearance:none;
-                  outline:none;font-family:inherit;padding:4px 0}
-  .cur-row input{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13.5px;
-                 text-align:right;width:100%;outline:none;font-family:inherit;background:#fcfdff;color:#0f172a}
-  .cur-row input:focus{border-color:#7ba0fb}
-  .cur-row.base input{background:#f4f7fd;color:#a2adbd}
-  .cur-row .x{border:0;background:transparent;color:#9aa5b5;font-size:15px;padding:4px}
-  .add-cur{padding:12px 16px;border-top:1px solid #f2f5fa;color:var(--primary);font-size:13.5px;
-           font-weight:700;display:flex;align-items:center;gap:5px;background:#fff;width:100%;border-left:0;
-           border-right:0;border-bottom:0;text-align:left}
-  .set-foot{display:flex;gap:9px;margin-bottom:14px}
-  .data-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px 16px 16px}
-
-  /* ---------- 底部导航 ---------- */
-  .tabbar{
-    position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:40;
-    height:calc(var(--nav-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);
-    background:rgba(255,255,255,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    border-top:1px solid var(--line);display:flex;
-  }
-  .tab{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;
-       justify-content:center;gap:3px;color:#9aa5b5;font-size:10.5px;font-weight:600;padding:0;transition:.15s}
-  .tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-  .tab.on{color:var(--primary)}
-  .tab.on svg{stroke-width:2.2}
-  .fab-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
-            height:0;z-index:45;pointer-events:none}
-  .fab{
-    position:absolute;right:18px;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);
-    width:56px;height:56px;border-radius:19px;border:0;pointer-events:auto;
-    background:linear-gradient(135deg,#4b7bfa,#3b6ef6);color:#fff;font-size:26px;font-weight:300;
-    display:grid;place-items:center;line-height:0;padding-bottom:3px;
-    box-shadow:0 12px 26px -10px rgba(59,110,246,.85),0 2px 6px rgba(16,24,40,.12);
-    transition:transform .16s,opacity .2s;
-  }
-  .fab:active{transform:scale(.92)}
-  .fab.hide{opacity:0;transform:scale(.6);pointer-events:none}
-
-  /* ---------- 记账面板 ---------- */
-  .sheet{
-    position:fixed;inset:0;z-index:80;background:#f7f9fd;display:flex;flex-direction:column;
-    transform:translateY(100%);visibility:hidden;
-    transition:transform .3s cubic-bezier(.32,.72,0,1),visibility 0s linear .3s;
-  }
-  .sheet.open{transform:none;visibility:visible;
-    transition:transform .3s cubic-bezier(.32,.72,0,1),visibility 0s linear 0s}
-  .sheet-head{
-    display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
-    background:rgba(247,249,253,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);flex:none;
-    max-width:520px;width:100%;margin:0 auto;
-  }
-  .sheet-head .sh-btn{border:0;background:transparent;font-size:15px;font-weight:600;color:#667085;padding:8px 4px}
-  .sheet-head .sh-title{flex:1;text-align:center;font-size:16px;font-weight:700}
-  .sheet-head .sh-save{color:var(--primary);font-weight:800}
-  .sheet-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 40px;
-              max-width:520px;width:100%;margin:0 auto;box-sizing:border-box}
-  .amt-block{background:#fff;border-radius:20px;padding:16px 18px;box-shadow:var(--sh);margin-bottom:14px}
-  .amt-block .lbl{font-size:11.5px;font-weight:700;color:#8b97a8;letter-spacing:.1em}
-  .amt-row{display:flex;align-items:center;gap:10px;margin-top:6px}
-  .amt-input{flex:1;min-width:0;border:0;outline:none;font-size:34px;font-weight:800;letter-spacing:-.03em;
-             padding:4px 0;background:transparent;color:#0f172a;font-variant-numeric:tabular-nums;width:100%}
-  .amt-input::placeholder{color:#d4dae4;font-weight:700}
-  .cur-pick{border:1px solid var(--line);background:#f7f9fd;border-radius:11px;padding:8px 10px;font-size:13px;
-            font-weight:700;color:#475467;appearance:none;-webkit-appearance:none;outline:none;max-width:118px}
-  .amt-conv{font-size:12px;color:#8b97a8;margin-top:2px;min-height:17px}
-  .amt-conv b{color:var(--primary);font-weight:700}
-  .fld{margin-bottom:16px}
-  .fld>label{display:block;font-size:12px;font-weight:700;color:#8b97a8;margin-bottom:8px;letter-spacing:.04em}
-  .fld input[type=text],.fld input[type=date]{
-    width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px;
-    font-size:15px;color:#0f172a;outline:none;transition:.15s;appearance:none;-webkit-appearance:none
-  }
-  .fld input:focus{border-color:#7ba0fb;box-shadow:0 0 0 3px rgba(59,110,246,.12)}
-  .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .cat-cell{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 4px;text-align:center;
-            transition:.15s;display:flex;flex-direction:column;align-items:center;gap:5px}
-  .cat-cell .ci{font-size:20px;line-height:1}
-  .cat-cell .cn{font-size:11.5px;font-weight:600;color:#5a6b85}
-  .cat-cell.on{border-color:#7ba0fb;background:#eef3ff;box-shadow:0 0 0 1px rgba(59,110,246,.28) inset}
-  .cat-cell.on .cn{color:#1d4ed8;font-weight:700}
-  .seg2{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#eef1f7;padding:4px;border-radius:14px}
-  .seg2 button{border:0;background:transparent;border-radius:11px;padding:11px 4px;font-size:14px;font-weight:700;
-               color:#667085;transition:.15s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .seg2 button.on{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(16,24,40,.14)}
-  .chips{display:flex;gap:7px;flex-wrap:wrap}
-  .chip{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 13px;font-size:12.5px;
-        font-weight:600;color:#5a6b85;transition:.15s}
-  .chip.on{border-color:#7ba0fb;background:#eef3ff;color:#1d4ed8;box-shadow:0 0 0 1px rgba(59,110,246,.25) inset}
-  .ratio-box{display:none;margin-top:10px;background:#fff;border:1px dashed #d5e0f5;border-radius:14px;padding:13px 14px}
-  .ratio-box.show{display:block}
-  .ratio-top{display:flex;justify-content:space-between;font-size:12px;color:#5a6b85;margin-bottom:4px}
-  .ratio-top b{color:var(--primary);font-variant-numeric:tabular-nums}
-  input[type=range]{width:100%;accent-color:var(--primary);height:26px;margin:0}
-  .sheet-tip{font-size:11.5px;color:#a2adbd;text-align:center;margin-top:4px}
-
-  /* ---------- toast ---------- */
-  .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 30px);
-         transform:translate(-50%,14px);background:rgba(15,23,42,.9);color:#fff;font-size:13px;font-weight:600;
-         padding:10px 18px;border-radius:999px;z-index:120;opacity:0;pointer-events:none;
-         transition:.24s;max-width:80vw;text-align:center}
-  .toast.show{opacity:1;transform:translate(-50%,0)}
-  .toast.sheet-open{bottom:auto;top:calc(env(safe-area-inset-top) + 70px);transform:translate(-50%,-14px)}
-  .toast.sheet-open.show{transform:translate(-50%,0)}
-</style>
+<html lang="zh-CN" data-page-node-id="0BsAQCYJsXF53qVjjnlS7j">
+<head data-page-node-id="MXBTXVrTG85JUmzLEDwkfh">
+<meta charset="utf-8" data-page-node-id="uqYUvlK2VGjgxzPLEtYSrV">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" data-page-node-id="2BSzhx7f1xA0mLOOLCYCVW">
+<meta name="color-scheme" content="light" data-page-node-id="G9qt4KwuieeECDj28s8Klq">
+<meta name="theme-color" content="#3b6ef6" data-page-node-id="G2yfdEblRkYRCYMY4qW4Ov">
+<meta name="apple-mobile-web-app-capable" content="yes" data-page-node-id="cw6wDW7EhcdROAPTMY27cW">
+<meta name="mobile-web-app-capable" content="yes" data-page-node-id="Gect35mF9bA2BMaSuyMDkD">
+<meta name="apple-mobile-web-app-status-bar-style" content="default" data-page-node-id="hgCPSuROXPtmUhYVlSutZx">
+<meta name="apple-mobile-web-app-title" content="旅行记账" data-page-node-id="LTw3GLubLV32JQknfnCios">
+<meta name="format-detection" content="telephone=no" data-page-node-id="20x4Dqq3tsqx1IxeY34f79">
+<link rel="manifest" href="./manifest.webmanifest" data-page-node-id="KOkFlR3ItOOcA06CDp6eMq">
+<link rel="apple-touch-icon" href="./icon-192.png" data-page-node-id="iPiEF2ecjPPoMkVDm6YC1t">
+<link rel="stylesheet" href="./styles.css" data-page-node-id="HlSGWWpzf3ZByLPY0YDHPd">
+<title>旅行记账 · 多人分摊</title>
 </head>
-<body data-page-node-id="EaS39ncB8kSmZPFvcFBi4W">
-<div id="app" data-page-node-id="za82wSguuKXUvQFt2EakwA">
-  <header class="topbar" data-page-node-id="FmyQHJJaf2afr2GRfnXPIj">
-    <div style="min-width:0" data-page-node-id="ercZhYMSHOxlPLqgmjl2xF">
-      <div class="tb-title" id="tripName" data-page-node-id="1c4ST4N6xGEsi7W9A0lzMT">旅行记账</div>
-      <div class="tb-sub" id="tripSub" data-page-node-id="xSUyefrWeDLHyF0hVMLpjA"></div>
+<body data-page-node-id="39GGz6Csgmuo74ahFXrCCP">
+<div id="app" data-page-node-id="Tx0ecEzjgXKxZIHmGXiJoU">
+  <header class="topbar" data-page-node-id="CuZfeElIfHkkcyNEBFwmFQ">
+    <div style="min-width:0" data-page-node-id="ebY2pdD2HtGHxWQH33YnbB">
+      <div class="tb-title" id="tripName" data-page-node-id="JIyP3lAJIm1TN4VyOjkbGq">旅行记账</div>
+      <div class="tb-sub" id="tripSub" data-page-node-id="PBaV5tEmiCZoiTFlfTDCE5"></div>
     </div>
-    <div class="tb-right" data-page-node-id="tfcmffvaniwvPQLKlOsbdg">
-      <button class="icon-btn" id="btnGoSettings" aria-label="设置" data-page-node-id="0IQNKtsDo49JX8MtFwSEvu">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="tOZAlVCvsSLvgF9Gsdm1sB">
-          <path d="M4 7h10M18 7h2M4 17h4M12 17h8" data-page-node-id="uXmHvnE1MUSM62XhPBqc7l"/><circle cx="16" cy="7" r="2.4" data-page-node-id="vdj9zw65DhKEwiOoc3CxbY"/><circle cx="10" cy="17" r="2.4" data-page-node-id="WvWF7BEaJxMdpRCykliqwP"/>
+    <div class="tb-right" data-page-node-id="rVVjDLn8SMTr0Oq3p8VnGR">
+      <button class="icon-btn" id="btnGoSettings" aria-label="设置" data-page-node-id="It6G6sYBwkbIKkFazNU03a">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="AVZ7TzTidaXF7q85YHftBL">
+          <path d="M4 7h10M18 7h2M4 17h4M12 17h8" data-page-node-id="ORsVwlGkWOvaiOokwZEu79"/><circle cx="16" cy="7" r="2.4" data-page-node-id="Ba7CxrsD4E5sgWHkhRId4I"/><circle cx="10" cy="17" r="2.4" data-page-node-id="F6xBUk5dK6LQwulsEzc1F0"/>
         </svg>
       </button>
     </div>
   </header>
 
-  <!-- 明细 -->
-  <section class="view active" data-view="list" data-page-node-id="mxOJAIcaMGlPDFYCKCMiXh">
-    <div class="hero" data-page-node-id="Mcr0aswMS4qkbIkAxwWIfZ">
-      <div class="hero-top" data-page-node-id="krSqDhdY5fJoeZUV4KeoGE">
-        <span class="hero-label" data-page-node-id="c3Atlqr7mckAhUWCb4qpJC">本次总支出</span>
-        <span class="hero-cur" id="heroCur" data-page-node-id="CR4YldGZqK7biOYOM8CnSU">CNY</span>
+  <!-- ============ 明细 ============ -->
+  <section class="view active" data-view="list" data-page-node-id="AppxN6WPi6KydQTNkfkF1H">
+    <div class="hero" data-page-node-id="pgZbumTVZJ7exuPL7U3WxX">
+      <div class="hero-top" data-page-node-id="zlm8vFKo27W5cRtZQFeLLl">
+        <span class="hero-label" data-page-node-id="G7QzHAGVLXCQOmg9Ehcucv">本次总支出</span>
+        <span class="hero-cur" id="heroCur" data-page-node-id="1FHgkP0DOZEv8bpDIDuGec">CNY</span>
       </div>
-      <div class="hero-amount" id="heroTotal" data-page-node-id="7fglVN54A1gcGqWlPoiiz3">¥0.00</div>
-      <div class="hero-meta" id="heroMeta" data-page-node-id="jPaEyfyzHrrFf2WfiYBY1h">人均 ¥0.00 · 0 笔</div>
-      <div class="hero-settle" id="heroSettle" data-page-node-id="R0cRG6NzKX4VMAtyCKVRtH"></div>
+      <div class="hero-amount" id="heroTotal" data-page-node-id="AN4RTSp2ajRmAQDVMjfD9q">¥0.00</div>
+      <div class="hero-meta" id="heroMeta" data-page-node-id="KGzkTu0snfsGTg3HtE422j">人均 ¥0.00 · 0 笔</div>
+      <div class="hero-settle" id="heroSettle" data-page-node-id="nM38YfTe2aNBXDbMweReDP"></div>
     </div>
-    <div class="filter-row" id="filters" data-page-node-id="tNmhAHUnjeEz0lXnmefMkJ"></div>
-    <div id="listBody" data-page-node-id="XBRaW8xeT0cntPZ5lOHlpZ"></div>
+    <div class="filter-row" id="filters" data-page-node-id="mW6nA3OeDvi2uMdRGaeNZb"></div>
+    <div id="listBody" data-page-node-id="Kpy2TFdILFqybaDfzYPbER"></div>
   </section>
 
-  <!-- 统计 -->
-  <section class="view" data-view="stats" data-page-node-id="JKvMacII4Rdm4mxq5LzP4Q">
-    <div style="padding-top:6px" data-page-node-id="Rs29fEKfXIgnpD5jFEKXqe">
-      <div class="card" data-page-node-id="01Cq6pUaU5jvKJ3MVERSSM">
-        <h3 class="card-h" data-page-node-id="qVhA2iIxbIDchWA9US3y0y">📊 分类构成 <span class="sub" id="statSub" data-page-node-id="iQpLyOCNraNuNhruuxG1kA"></span></h3>
-        <div id="catBars" data-page-node-id="ZTpKhrMVJiSPPCf0IrQ31S"></div>
+  <!-- ============ 统计 ============ -->
+  <section class="view" data-view="stats" data-page-node-id="iFrWOlvzLZNGwkHA0sBOGL">
+    <div style="padding-top:6px" data-page-node-id="jk6QYp1QozG4ORL2EwlYUX">
+      <div class="card" data-page-node-id="xobTHPFueeAFDdqDmIjf5Y">
+        <h3 class="card-h" data-page-node-id="Gi683Sex4yGqANyXkdoSjP">📊 分类构成 <span class="sub" id="statSub" data-page-node-id="aYQvz5FC7dctCr7YQRMNDG"></span></h3>
+        <div id="catBars" data-page-node-id="LxvrSU2CuX6H4mRBgYHlFh"></div>
       </div>
-      <div class="card" data-page-node-id="S27lJiiUKwzWyOMkkl2xnU">
-        <h3 class="card-h" data-page-node-id="9GSzmtcJc2DMuMZtpvBoMF">📅 每日花费</h3>
-        <div class="daychart" id="dayChart" data-page-node-id="5JKSA2ppRhtoH36w9KjDQ5"></div>
+      <div class="card" data-page-node-id="WC7wo1GL8gDPn0S28o0dtY">
+        <h3 class="card-h" data-page-node-id="HaTNL87OtcmwLbkZ7AQBBF">📅 每日花费</h3>
+        <div class="daychart" id="dayChart" data-page-node-id="i2ih0RAmuZLsnscPCHllps"></div>
       </div>
-      <div class="card" data-page-node-id="4CxhmKzOA5U0DhvHh5lfAI">
-        <h3 class="card-h" data-page-node-id="sGvVkZWcVIwSXiLTFqByBr">👥 已付 / 应担对比</h3>
-        <div id="cmpBox" data-page-node-id="Swv0CCPdJABijc6bow3hPf"></div>
+      <div class="card" data-page-node-id="AjQCTADspE5uocqSFZonJg">
+        <h3 class="card-h" data-page-node-id="dX2sHPMIRGAzrpRYbSLiSv">👥 已付 / 应担对比</h3>
+        <div id="cmpBox" data-page-node-id="RSqntrhf2LAzYSBlIgiRB3"></div>
       </div>
-      <div class="card" data-page-node-id="zyqqN6OovZn40xBD1L6X7a">
-        <h3 class="card-h" data-page-node-id="9klzzZmAzES1pG4ah3Jtj6">💱 各币种支出</h3>
-        <div class="cur-list" id="curPills" data-page-node-id="anKJTsNd4gAXJN26w5jHRM"></div>
-        <div class="note" data-page-node-id="pl0lE0rymTw7PEgIAx3sf6">折合金额按行程设置中的汇率换算，汇率可在「设置」里修改。</div>
+      <div class="card" data-page-node-id="VbZ9ueQGoCvhsxBH3QIXwA">
+        <h3 class="card-h" data-page-node-id="xNoD0rOTlmGHRyPrDphu6N">💳 支付方式</h3>
+        <div id="payStats" data-page-node-id="bCKoApjVoMHlXEzNLAEH2s"></div>
       </div>
-    </div>
-  </section>
-
-  <!-- 结算 -->
-  <section class="view" data-view="settle" data-page-node-id="eXvxX5fJAikYJsQZAnk2X5">
-    <div style="padding-top:6px" data-page-node-id="ja3PNeSHQYZynG99VcB3mm">
-      <div class="card settle-big" id="settleBig" data-page-node-id="GhFvcMdJVZCyRjgRgFGoQ7"></div>
-      <div class="mcards" id="memberCards" data-page-node-id="QUfXFgdcfECmyqorH7iDGe"></div>
-      <button class="btn primary" id="btnCopy" data-page-node-id="8YAPAcKinrTMT1ofti4uIM">📋 复制结算结果，发给对方</button>
-      <div class="note" style="text-align:center" data-page-node-id="oBop8xooFuUHxW4krVk6MW">
-        结余 = 已付 − 应担。正数表示对方该给你，负数表示你该给对方。<br data-page-node-id="aBjH0bUsDn6RFcTeU7GivY">
-        两人总额始终相等，转账一笔即可两清。
+      <div class="card" data-page-node-id="1bTQehWtohrhzEAsEBZsTR">
+        <h3 class="card-h" data-page-node-id="rfBjCvCmePEHq86GpJpuYX">💱 各币种支出</h3>
+        <div class="cur-list" id="curPills" data-page-node-id="cvYf8CL6RRLnT8SLEbDoY8"></div>
+        <div class="note" data-page-node-id="PiBxg5OMupcXGKXFHe2kJc">折合金额按「设置」里的汇率换算。</div>
       </div>
     </div>
   </section>
 
-  <!-- 设置 -->
-  <section class="view" data-view="settings" data-page-node-id="lXJADRnujLwrBbtERg8KNx">
-    <div style="padding-top:6px" data-page-node-id="OPiC4MWpthoFwShSplemLK">
-      <div class="set-group" data-page-node-id="A3Eq9PwCU6YfpneThuDOLy">
-        <div class="gh" data-page-node-id="YR8Re92qga3jorjiLTRtc0">行程信息</div>
-        <div class="set-row" data-page-node-id="BlHkBAW0ue54atrzgBmB5s"><label data-page-node-id="wzgb3bSphG6zIkvSL4hhrr">名称</label><input type="text" id="sName" maxlength="30" placeholder="例如：关西赏枫 5 日" data-page-node-id="ut7onmw8qofiJaD3Wk6TBv"></div>
-        <div class="set-row" data-page-node-id="YqcDDtujqduBakUmHttK7D"><label data-page-node-id="CWWI359Zcb1HJA6gyLPQDo">目的地</label><input type="text" id="sDest" maxlength="40" placeholder="选填" data-page-node-id="U3DcmC6J6b8Uw72KwrSEF8"></div>
-        <div class="set-row" data-page-node-id="0O9GtJGpwBaPrBE26AcvEN"><label data-page-node-id="j2U6yGwjEyDM6RrcMLAoaN">出发</label><input type="date" id="sStart" data-page-node-id="Nqx5JBi3OcbxucZ2HoD6CW"></div>
-        <div class="set-row" data-page-node-id="t5R5qncbGCoGq7gaf8wnqH"><label data-page-node-id="UVBpPkudGGzsrGhP8BcLUl">返程</label><input type="date" id="sEnd" data-page-node-id="y9kMUxnwyHNwL521Xj8xuQ"></div>
-        <div class="set-row" data-page-node-id="os8ECtEDyxKbJSKwVUIrlH"><label data-page-node-id="j2Eh8G28nRmf6Yp9UyxS4g">成员 A</label><input type="text" id="sNameA" maxlength="10" placeholder="我" data-page-node-id="84vTU7XjZTgrvsoDJo8Hmt"></div>
-        <div class="set-row" data-page-node-id="Pr5NviAaLxBkuVmYFkYtnN"><label data-page-node-id="ffHl2EJP14A7ntsKWb4D5d">成员 B</label><input type="text" id="sNameB" maxlength="10" placeholder="同伴" data-page-node-id="7ZG8CFui7ojliuAGxjIDj3"></div>
-        <div class="set-row" data-page-node-id="weS0rEXXSjW28AHFtxiSHW"><label data-page-node-id="afjxIwVLzld5IggybETjtm">结算货币</label><select id="sBase" data-page-node-id="c7P4yrBst9qQedQxuypJm1"></select></div>
+  <!-- ============ 结算 ============ -->
+  <section class="view" data-view="settle" data-page-node-id="1o4K0ut1zR8GODLPLMwuig">
+    <div style="padding-top:6px" data-page-node-id="kGnXWkbfGDES9xi2wX9mUz">
+      <div class="card settle-big" id="settleBig" data-page-node-id="KzJEB0eqoqjQ49pQlfnFgS"></div>
+      <div class="mcards" id="memberCards" data-page-node-id="REgsD4E8LufPucrN2dl38e"></div>
+      <div class="card" style="padding:4px 16px 8px" data-page-node-id="9IXUwJOCGiOG9fsdFD9ffW">
+        <h3 class="card-h" style="margin:12px 0 2px" data-page-node-id="wtk6iynfYNwvi2DgO9GV7A">💸 转账方案</h3>
+        <div id="transferList" data-page-node-id="Nzh5srgPY7qLOxX60khzEd"></div>
+      </div>
+      <button class="btn primary" id="btnCopy" data-page-node-id="GCc3CvIFI5b5MJB1gg4Aw3">📋 复制结算结果，发到群里</button>
+      <div class="note" style="text-align:center" data-page-node-id="4gBUkyVpNCmopvmjY31dEJ">
+        结余 = 已付 − 应担。正数该收钱，负数该付钱。<br data-page-node-id="L3MDoHZ5upYewPnLsu95Tq">
+        按最少笔数给出转账方案，全部转完即两清。
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 设置 ============ -->
+  <section class="view" data-view="settings" data-page-node-id="66efCq2fnzowCicT4jMZ0p">
+    <div style="padding-top:6px" data-page-node-id="KtfxeyXqINfCdkgMxVYSkX">
+      <div class="set-group" data-page-node-id="PUO9DU8TXQ8qMD6yIL3X3A">
+        <div class="gh" data-page-node-id="HACqb40EGF8HMRoqFMZKTE">行程信息</div>
+        <div class="set-row" data-page-node-id="BE0dA0izAWqbsqDtqEsive"><label data-page-node-id="QDvaR6U3NHalw9snDzJiQw">名称</label><input type="text" id="sName" maxlength="30" placeholder="例如：关西赏枫 5 日" data-page-node-id="nmKWlOcQcPBlPF9LQNYKSw"></div>
+        <div class="set-row" data-page-node-id="YkujvKJaeKUGsIcMDZ9lwF"><label data-page-node-id="02O4ac07T0x00ZfXXpeAMU">目的地</label><input type="text" id="sDest" maxlength="40" placeholder="选填" data-page-node-id="4E3yFTjTaH7oP6DVNGsF7v"></div>
+        <div class="set-row" data-page-node-id="8h6VEhDRs4wz7JRWSla5H6"><label data-page-node-id="dSIsa37fqR4Ed9h3apPHlh">出发</label><input type="date" id="sStart" data-page-node-id="TCZhPnaV8ppwejTtsNiygw"></div>
+        <div class="set-row" data-page-node-id="HP15aXZr6qIaPQvLA4UDw8"><label data-page-node-id="aaPYWF7GAZPfBFwVE9nbMd">返程</label><input type="date" id="sEnd" data-page-node-id="G5NPoaBgJV0NvSb4RVPi1Z"></div>
+        <div class="set-row" data-page-node-id="OAqFEsX4ijiBWOpvTXzCzq"><label data-page-node-id="MaNgXIVegHKrIkXmXg2mUK">结算货币</label><select id="sBase" data-page-node-id="HVeQcO1ON5gZ0fWHMjYuaG"></select></div>
       </div>
 
-      <div class="set-group" data-page-node-id="U8ZfPJLyX8fz4XYa39IwX5">
-        <div class="gh" data-page-node-id="ewbPVovbYU5nzJgX1mrCos">币种与汇率（1 外币 = ? 结算货币）</div>
-        <div id="curRows" data-page-node-id="dm8rg0PWJFPDPC3Yj2rIBE"></div>
-        <button class="add-cur" id="btnAddCur" data-page-node-id="ZYreogLHVTZdPnWixxZ2Tw">＋ 添加币种</button>
+      <div class="set-group" data-page-node-id="ksKrIWp2xIQ7FHWqDz7aF4">
+        <div class="gh" data-page-node-id="wix9KW7RiSgr9EYEP16IJM">同行成员<span class="mcount" id="memberCount" data-page-node-id="MysXhtJgThm0S6lJmGmRpt">2 人</span></div>
+        <div id="memberRows" data-page-node-id="S4A2aRi9GoQtrjHS9AS057"></div>
+        <button class="add-cur" id="btnAddMember" data-page-node-id="xr9DIOtXpiAHYX40CNUJLd">＋ 添加成员</button>
       </div>
 
-      <div class="set-group" data-page-node-id="qCn13dXoBfHfeHssd6lWsd">
-        <div class="gh" data-page-node-id="lA1vBe96QzgDOADiM7c4sg">数据</div>
-        <div class="data-btns" data-page-node-id="NLCgRpHIkkHcQVscFbC0up">
-          <button class="btn sm primary" id="btnXlsx" data-page-node-id="FfYW53UFXbHNW3hWG9HcTa">导出 Excel</button>
-          <button class="btn sm" id="btnCsv" data-page-node-id="wrbOIbH2m9Ld3utQIiUR2r">导出 CSV</button>
-          <button class="btn sm" id="btnBackup" data-page-node-id="KUZObrhWCPDkSQWwftubMJ">备份 JSON</button>
-          <button class="btn sm" id="btnRestore" data-page-node-id="XBa1YAzNleG1N0IRiOpap4">导入 JSON</button>
+      <div class="set-group" data-page-node-id="dp3wo6RRxSfTx3b56NAUWE">
+        <div class="gh" data-page-node-id="iCLg9hfop262re7U8RUqNq">币种与汇率（1 外币 = ? 结算货币）</div>
+        <div id="curRows" data-page-node-id="qg0Yq45Vl18C4rb5GX9p0U"></div>
+        <button class="add-cur" id="btnAddCur" data-page-node-id="ZfZxfZFUtoXGKlPF4iljqA">＋ 添加币种</button>
+      </div>
+
+      <div class="set-group" data-page-node-id="ouap1bEzyvzlbjEuHqB6qD">
+        <div class="gh" data-page-node-id="WYzMm8Li76pYeczBGrkxyd">支付方式</div>
+        <div id="payRows" data-page-node-id="R8gMIjY5rLO9nqfRDZBkDY"></div>
+        <button class="add-cur" id="btnAddPay" data-page-node-id="1BDacFobBFiD5Pwy4Q6G8Z">＋ 添加支付方式</button>
+      </div>
+
+      <div class="set-group" data-page-node-id="bH2VzGl5EHBUvBjEhWl0ym">
+        <div class="gh" data-page-node-id="WrwmXEXxgfENmMlAKOyssc">数据</div>
+        <div class="data-btns" data-page-node-id="uBQDxStgEi1vuEkPpXHLMt">
+          <button class="btn sm primary" id="btnXlsx" data-page-node-id="oZFWhI835Co52jGqtZnBiG">导出 Excel</button>
+          <button class="btn sm" id="btnCsv" data-page-node-id="rR99MOSgbPJCzkI0sdJmjX">导出 CSV</button>
+          <button class="btn sm" id="btnBackup" data-page-node-id="fzyUGk8U52tshys3c8YxgA">备份 JSON</button>
+          <button class="btn sm" id="btnRestore" data-page-node-id="Kq8sEy5Vz3tfjR6onCPBPN">导入 JSON</button>
         </div>
-        <div class="set-row" style="border-top:1px solid #f2f5fa" data-page-node-id="negMDrOaWyI66uaPp2yEbx">
-          <div style="font-size:12px;color:#8b97a8;line-height:1.6" id="storageTip" data-page-node-id="DTJmWkybqB076SxcfQ54L4"></div>
+        <div class="set-row" style="border-top:1px solid #f2f5fa" data-page-node-id="wYTIjV9439EbDpecacEDam">
+          <div style="font-size:12px;color:#8b97a8;line-height:1.6" id="storageTip" data-page-node-id="QFoNmulMnOQrkWimrpZQjj"></div>
         </div>
-        <div class="data-btns" style="padding-top:0" data-page-node-id="0HFvSBVJvVR5KgTrScbZlO">
-          <button class="btn sm danger" id="btnClear" data-page-node-id="QVgE7EGJGCESFzUzQXXAJn">清空全部明细</button>
+        <div class="data-btns" style="padding-top:0" data-page-node-id="a8jLNrlU4Je2yi8sHLQuVm">
+          <button class="btn sm danger" id="btnClear" data-page-node-id="NpuUdoVmKRTBCudv45E6nO">清空全部明细</button>
         </div>
       </div>
 
-      <div class="set-foot" data-page-node-id="JLSUwyxMUInrcxy1U3sM3m">
-        <button class="btn primary" id="btnSaveSettings" data-page-node-id="cYLUCKAuNYB4O725AkRv5d">保存设置</button>
+      <div class="set-foot" data-page-node-id="SgwjYAJJRex6PKgSF9tyLh">
+        <button class="btn primary" id="btnSaveSettings" data-page-node-id="En9ZaFDjv0poMy30eWOQRo">保存设置</button>
       </div>
 
-      <div class="note" style="text-align:center;padding-bottom:10px" data-page-node-id="di0wMCQS5faVMtr51BIutu">
-        数据保存在本机浏览器（IndexedDB），不上传服务器。<br data-page-node-id="vv53vK8SyGygIx3yWm3d7Q">
+      <div class="note" style="text-align:center;padding-bottom:10px" data-page-node-id="QSap2J2Xks3mZmVHOPrrHf">
+        数据保存在本机浏览器（IndexedDB），不上传服务器。<br data-page-node-id="fHNkPwhqp4FXDLhSZdc5Xl">
         换手机或清理浏览器数据前，请先「备份 JSON」或「导出 Excel」。
       </div>
     </div>
   </section>
 
-  <div class="fab-wrap" data-page-node-id="JzCBHrZNrox4p0PXA0KNZT">
-    <button class="fab" id="fab" aria-label="记一笔" data-page-node-id="B6Z1Pn6DjApJST69J5U2rC">＋</button>
+  <div class="fab-wrap" data-page-node-id="PGLnh8i1Uq7ldoBnSO6cOc">
+    <button class="fab" id="fab" aria-label="记一笔" data-page-node-id="FrdEeiNFR0dqvO7NznniAd">＋</button>
   </div>
 
-  <nav class="tabbar" id="tabbar" data-page-node-id="shpYaSvd78dIqBDKDX21DO">
-    <button class="tab on" data-tab="list" data-page-node-id="tjwo26XE1i3EYXbcoNAHXp">
-      <svg viewBox="0 0 24 24" data-page-node-id="DSvo0HK7dQDrRNxsTFpC4i"><path d="M8 6h12M8 12h12M8 18h12" data-page-node-id="6iUtfG6Z78wvzJRC7MoDS4"/><circle cx="4" cy="6" r="1.2" data-page-node-id="C5w8Mnl1j6nzsTYbA2PkDa"/><circle cx="4" cy="12" r="1.2" data-page-node-id="Ht9kV0eCYifFAvU9aFPFld"/><circle cx="4" cy="18" r="1.2" data-page-node-id="R1NFsQRieeW9rIrDAk6w06"/></svg>
+  <nav class="tabbar" id="tabbar" data-page-node-id="4LVsCzswfT8zIaD8C6AfHt">
+    <button class="tab on" data-tab="list" data-page-node-id="4CoJFwXmsyCbaTfBd2XWtg">
+      <svg viewBox="0 0 24 24" data-page-node-id="91tx39yfKrazqUFxGZpskP"><path d="M8 6h12M8 12h12M8 18h12" data-page-node-id="GC8rwd9wIa7sBHg2KKHOFd"/><circle cx="4" cy="6" r="1.2" data-page-node-id="QrWRBJJp0DOCXJ7y5TFfQV"/><circle cx="4" cy="12" r="1.2" data-page-node-id="uRe6bYhObhZjVJvTT3vQJd"/><circle cx="4" cy="18" r="1.2" data-page-node-id="v4s4TUYfG7pZs6AHmsG2F8"/></svg>
       明细
     </button>
-    <button class="tab" data-tab="stats" data-page-node-id="opuR2sOqlDkbKwBuBjG29i">
-      <svg viewBox="0 0 24 24" data-page-node-id="0bbuESDEKX83lqg5SN3hcG"><path d="M5 20V10M12 20V4M19 20v-7" data-page-node-id="GeaHwWNgWaV0TGF7dIpFDX"/></svg>
+    <button class="tab" data-tab="stats" data-page-node-id="R0WgTfN4TZAcGMWWhWkAMg">
+      <svg viewBox="0 0 24 24" data-page-node-id="O453a6qckQBizE9hteXnmb"><path d="M5 20V10M12 20V4M19 20v-7" data-page-node-id="LWJBnEQ5FtXQJN651Uq9Rl"/></svg>
       统计
     </button>
-    <button class="tab" data-tab="settle" data-page-node-id="DEPw9IV8cVBpAVzExXIO9b">
-      <svg viewBox="0 0 24 24" data-page-node-id="GlSA9t4QUB77WRO3v0cZV0"><path d="M4 8h13l-3-3M20 16H7l3 3" data-page-node-id="oVRIx49rHcsAozCbeM5kxG"/></svg>
+    <button class="tab" data-tab="settle" data-page-node-id="e3gYVLZCnTwrincpPGHvY1">
+      <svg viewBox="0 0 24 24" data-page-node-id="udS7FPmbbNG8CqABD9iSp4"><path d="M4 8h13l-3-3M20 16H7l3 3" data-page-node-id="L08qV4mzA6nsGCZQOzTRqD"/></svg>
       结算
     </button>
-    <button class="tab" data-tab="settings" data-page-node-id="imlthHiyH9XpD3dyAACnyr">
-      <svg viewBox="0 0 24 24" data-page-node-id="iXZ6VwdwAbg0HLHMZ846t4"><circle cx="12" cy="12" r="3.2" data-page-node-id="XYWRtH05qcs60s8cIp23eh"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7" data-page-node-id="I1KFBZlYAc9Jjtwn99qDHP"/></svg>
+    <button class="tab" data-tab="settings" data-page-node-id="8kDvVdTfcl14gxpRjJatGz">
+      <svg viewBox="0 0 24 24" data-page-node-id="27HwxjzldkHRJcuGcY0dB6"><circle cx="12" cy="12" r="3.2" data-page-node-id="J19lQtCAlN3ljaXiEUZE8g"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7" data-page-node-id="YiuKLkp7jCCCSiuqcqGTCO"/></svg>
       设置
     </button>
   </nav>
 </div>
 
-<!-- 记账面板 -->
-<div class="sheet" id="sheet" data-page-node-id="ltMFWVcCRRFD6lPpsCDSF1">
-  <div class="sheet-head" data-page-node-id="Bgcst6IoD05gDk06WeDH4c">
-    <button class="sh-btn" id="shCancel" data-page-node-id="pF8C7BdVETnqfQGji0imbo">取消</button>
-    <div class="sh-title" id="shTitle" data-page-node-id="vKl0tlgYmxt2PViQaQotin">记一笔</div>
-    <button class="sh-btn sh-save" id="shSave" data-page-node-id="QBcEv6tph7RQvXZJ1KvdXi">保存</button>
+<!-- ============ 记账面板 ============ -->
+<div class="sheet" id="sheet" data-page-node-id="nDSIOnxhGf1HVNlmdZItzS">
+  <div class="sheet-head" data-page-node-id="eVjcU7cgnuNDGebMjgB7CE">
+    <button class="sh-btn" id="shCancel" data-page-node-id="YhanCSLP2lBwOAMfHqcooV">取消</button>
+    <div class="sh-title" id="shTitle" data-page-node-id="8PNcLhTzgc2DLDb9dMicZp">记一笔</div>
+    <button class="sh-btn sh-save" id="shSave" data-page-node-id="gOhfI3n2sHk5oGCAldON5k">保存</button>
   </div>
-  <div class="sheet-body" data-page-node-id="H2O8Cc8xBV5gvAdmfpg7Im">
-    <div class="amt-block" data-page-node-id="HYqkplnQusTZx25jnso498">
-      <div class="lbl" data-page-node-id="uD5eWrsCRxO5c1wHhFPFO9">金额</div>
-      <div class="amt-row" data-page-node-id="IiG7nEIZLqoMgKEBmGZmDx">
-        <input class="amt-input" id="fAmount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off" data-page-node-id="Bm5yDBqst4J2nEb9sFBbZg">
-        <select class="cur-pick" id="fCurrency" data-page-node-id="gRMr0dewoy4gKQDIGW8wgH"></select>
+  <div class="sheet-body" data-page-node-id="dH1WBZuvxH8Y3hnbMMTjIy">
+    <div class="amt-block" data-page-node-id="ijE679188DfMj0W48fDZ1V">
+      <div class="lbl" data-page-node-id="OzbAEmTmJ14fiCzBj35TL3">金额</div>
+      <div class="amt-row" data-page-node-id="5BUWeG3DaLjfDvbcrjJZnH">
+        <input class="amt-input" id="fAmount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off" data-page-node-id="iORFfRBoxEcSkaUfyKCve3">
+        <select class="cur-pick" id="fCurrency" data-page-node-id="8mddA1hqbDsPxTrs2AIK24"></select>
       </div>
-      <div class="amt-conv" id="convText" data-page-node-id="msSWgrUYN9BaAqOhueXjaI"></div>
+      <div class="amt-conv" id="convText" data-page-node-id="SDjnks1EuHFjlOlDbVsPix"></div>
     </div>
 
-    <div class="fld" data-page-node-id="Hii6uAnDg4n1Sm0ArQBIYm">
-      <label data-page-node-id="TljUfTYz0avs04oq3Cg0eV">分类</label>
-      <div class="cat-grid" id="catGrid" data-page-node-id="OwCfcOmwLkEaBlOWt5yfxh"></div>
+    <div class="fld" data-page-node-id="lnLWNhILCLo8WLDqny6Zlh">
+      <label data-page-node-id="32Hwi1VKn0LLKIEb87uBig">分类</label>
+      <div class="cat-grid" id="catGrid" data-page-node-id="5olLB7SegFvOgE38NG1RqD"></div>
     </div>
 
-    <div class="fld" data-page-node-id="k4UsIRnqVKyXW9vhuSDKxs">
-      <label data-page-node-id="K4H3U4FhfH4L1kxoE0bzVS">项目</label>
-      <input type="text" id="fTitle" placeholder="例如：机场快线 / 民宿 4 晚" maxlength="40" autocomplete="off" data-page-node-id="Ipr8qiSbge9f5Ks24Q4Q32">
+    <div class="fld" data-page-node-id="xtRqs4lLyTjYTKXx4wrfVq">
+      <label data-page-node-id="xtM3elJDpph4CaynB7eBGm">项目</label>
+      <input type="text" id="fTitle" placeholder="例如：机场快线 / 民宿 4 晚" maxlength="40" autocomplete="off" data-page-node-id="8cmJwJ6TLqoqJfck2iKUz2">
     </div>
 
-    <div class="fld" data-page-node-id="LuDxQgdABNnOFWASkcaccK">
-      <label data-page-node-id="8bAGIqrv1LGuFg45WS2xit">谁付的钱</label>
-      <div class="seg2" id="payerSeg" data-page-node-id="8esbnCKa11kJ5LB5pGm3Jq"></div>
+    <div class="fld" data-page-node-id="QQZE54HwRFnQ4pcU8wEOgF">
+      <label data-page-node-id="wWBZIAIXPmuTm6bNyOdTxk">谁付的钱</label>
+      <div class="chips-wrap" id="payerRow" data-page-node-id="gmday06PZ2ZztsoZDwscIh"></div>
     </div>
 
-    <div class="fld" data-page-node-id="TZBrGfMNdkXn5ARH8Fp08x">
-      <label data-page-node-id="BERI2nIqKaC6L9Dg7KkVeW">怎么分摊</label>
-      <div class="chips" id="splitChips" data-page-node-id="CwioocxXu4xRjn9EPW2oAU"></div>
-      <div class="ratio-box" id="ratioBox" data-page-node-id="YZEBD74Wyhl3f5jzGfVfh8">
-        <div class="ratio-top" data-page-node-id="YcX2DCvEhLp4VCvGlqTKxj"><span id="ratioLeft" data-page-node-id="YGcXiEjyWbtKd4JUGJN5yl">A 承担</span><b id="ratioRight" data-page-node-id="tAGqOVE3wGvz75VCsCj6Mj"></b></div>
-        <input type="range" id="fRatio" min="0" max="100" step="5" value="50" data-page-node-id="t5YUdYE8aFoACJ4yjH4DQN">
+    <div class="fld" data-page-node-id="iviB3RIdAwlnh0VGGXjzo2">
+      <label data-page-node-id="iGfGOGrqU85BBJMAQP0yji">谁参与分摊 <span id="partHint" style="font-weight:500;color:#a2adbd" data-page-node-id="SIAeX3tbwIigdO5LqpUphD"></span></label>
+      <div class="chips-wrap" id="partRow" data-page-node-id="GKBBU5JziMjB93fO3jTvns"></div>
+    </div>
+
+    <div class="fld" data-page-node-id="ctUBf7CZitazyC9oaROUzi">
+      <label data-page-node-id="IiVZv31sOmwSqeLXtO4FUe">怎么分摊</label>
+      <div class="chips" id="splitChips" data-page-node-id="8Ulns1OWBXVBDnTBu7xG8w"></div>
+      <div id="customBox" data-page-node-id="kGAYi06lTGe08VRyh2ECzv"></div>
+    </div>
+
+    <div class="fld" data-page-node-id="UpuMSE7fP1JEHApTqAm3OU">
+      <label data-page-node-id="7wCsw8zH8533i9csspLhxu">支付方式</label>
+      <div class="chips-wrap" id="payRow" data-page-node-id="kpMR22aBunjmbcve0xNu8l"></div>
+    </div>
+
+    <div class="fld" data-page-node-id="vWnEEsSwx4aDwnF5flqJ5D">
+      <label data-page-node-id="qWQmNqZAlXWWR4WyJmnsoa">日期与时间</label>
+      <div class="dt-row" data-page-node-id="e0gOXFgJJptIHapIVa6DyU">
+        <input type="date" id="fDate" data-page-node-id="1Y1TPJSeWxxoc536fizhmo">
+        <input type="time" id="fTime" data-page-node-id="7TY6AX8yJFzgMFFjTOu0MX">
       </div>
     </div>
 
-    <div class="fld" data-page-node-id="52jGlGE7A81AVn3yLZ3H9y">
-      <label data-page-node-id="mp2eOE6zY7nmDVtGa65M8I">日期</label>
-      <input type="date" id="fDate" data-page-node-id="P43SyaIJ79izGzaubMWtJ5">
+    <div class="fld" data-page-node-id="xrB85rLgOoEswcM8X1Z9TE">
+      <label data-page-node-id="FLb9tJvpwVBp0DGOoMcL8I">备注（选填）</label>
+      <input type="text" id="fNote" placeholder="谁多吃了、谁买的单…" maxlength="60" autocomplete="off" data-page-node-id="CleHFnijelxNqDaUEvnAir">
     </div>
 
-    <div class="fld" data-page-node-id="B5DOL5t5JevbBiShavfhzM">
-      <label data-page-node-id="jFwtl8qwpg0IeCqrh3zaYV">备注（选填）</label>
-      <input type="text" id="fNote" placeholder="谁多吃了、谁买的单…" maxlength="60" autocomplete="off" data-page-node-id="k1jX4pjHlBepk0X712hxSw">
+    <div class="fld" id="delWrap" style="display:none" data-page-node-id="kgpQbG73R0hn7kDFw8LwhG">
+      <button class="btn danger" id="btnDelete" data-page-node-id="SX8d61elXWXCZXs42UtWoo">删除这笔</button>
     </div>
-
-    <div class="fld" id="delWrap" style="display:none" data-page-node-id="DjBIxBvmpg1f4XDz8vZokk">
-      <button class="btn danger" id="btnDelete" data-page-node-id="BbpfIC45zVrGv9SIwlZ6vm">删除这笔</button>
-    </div>
-    <div class="sheet-tip" data-page-node-id="lWzqEq4MQk9V2nqUosJlMo">数据自动保存在本机，关闭页面不会丢失</div>
+    <div class="sheet-tip" data-page-node-id="aTJmawvonVur4HxdFw8tqm">数据自动保存在本机，关闭页面不会丢失</div>
   </div>
 </div>
 
-<div class="toast" id="toast" data-page-node-id="jRA4Hqyu5cFb7SGZWvqMc6"></div>
-<input type="file" id="fileInput" accept=".json,application/json" hidden data-page-node-id="ixtjPHF0091lwyCIzJ3f7B">
+<div class="toast" id="toast" data-page-node-id="1gDX6qZfiXQw0uASSdq8nT"></div>
+<input type="file" id="fileInput" accept=".json,application/json" hidden data-page-node-id="O6jvabEhNzk9Pr9Yf3NU3y">
 
-<script>
-(function () {
-  'use strict';
-
-  /* ========================================================
-     0. 常量
-     ======================================================== */
-  var LS_KEY = 'travel-split-m1';
-  var DB_NAME = 'travel_split';
-  var DB_VER = 1;
-  var STORE = 'kv';
-  var EXPORT_KEY = 'travel-split-last-export';
-
-  var CATS = [
-    { id: 'transport', name: '交通', icon: '✈️', color: '#3b82f6' },
-    { id: 'stay',      name: '住宿', icon: '🏨', color: '#8b5cf6' },
-    { id: 'food',      name: '餐饮', icon: '🍜', color: '#f59e0b' },
-    { id: 'ticket',    name: '门票娱乐', icon: '🎫', color: '#10b981' },
-    { id: 'shop',      name: '购物', icon: '🛍️', color: '#ec4899' },
-    { id: 'other',     name: '其他', icon: '📦', color: '#64748b' }
-  ];
-  var CATMAP = {};
-  CATS.forEach(function (c) { CATMAP[c.id] = c; });
-
-  var CUR = {
-    CNY: { name: '人民币', symbol: '¥' }, USD: { name: '美元', symbol: '$' },
-    JPY: { name: '日元', symbol: 'JP¥' }, EUR: { name: '欧元', symbol: '€' },
-    GBP: { name: '英镑', symbol: '£' }, HKD: { name: '港币', symbol: 'HK$' },
-    KRW: { name: '韩元', symbol: '₩' }, THB: { name: '泰铢', symbol: '฿' },
-    SGD: { name: '新加坡元', symbol: 'S$' }, MYR: { name: '林吉特', symbol: 'RM' },
-    TWD: { name: '新台币', symbol: 'NT$' }, AUD: { name: '澳元', symbol: 'A$' },
-    VND: { name: '越南盾', symbol: '₫' }, IDR: { name: '印尼盾', symbol: 'Rp' }
-  };
-  var ZERO_DEC = ['JPY', 'KRW', 'VND', 'IDR'];
-
-  /* ========================================================
-     1. 工具
-     ======================================================== */
-  var $ = function (id) { return document.getElementById(id); };
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (m) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
-    });
-  }
-  var nfCache = {};
-  function nf(d) {
-    if (!nfCache[d]) nfCache[d] = new Intl.NumberFormat('zh-CN', { minimumFractionDigits: d, maximumFractionDigits: d });
-    return nfCache[d];
-  }
-  function money(n, code) {
-    code = code || state.trip.base;
-    var sym = CUR[code] ? CUR[code].symbol : code + ' ';
-    var d = ZERO_DEC.indexOf(code) > -1 ? 0 : 2;
-    return sym + nf(d).format(Number(n) || 0);
-  }
-  function pct(v) { return (Number(v.toFixed(1))) + '%'; }
-  function todayStr() { return new Date().toISOString().slice(0, 10); }
-  function uid() { return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function hexA(hex, a) {
-    var h = hex.replace('#', '');
-    return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' +
-      parseInt(h.slice(4, 6), 16) + ',' + a + ')';
-  }
-  function fmtDate(s) {
-    var d = new Date(s + 'T00:00:00');
-    if (isNaN(d.getTime())) return s;
-    var wk = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][d.getDay()];
-    return (d.getMonth() + 1) + '月' + d.getDate() + '日 · ' + wk;
-  }
-  var toastTimer = null;
-  function toast(msg) {
-    var t = $('toast');
-    t.textContent = msg;
-    t.className = 'toast show' + ($('sheet').classList.contains('open') ? ' sheet-open' : '');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.className = 'toast' + ($('sheet').classList.contains('open') ? ' sheet-open' : ''); }, 2000);
-  }
-
-  /* ========================================================
-     2. 存储（IndexedDB 优先，localStorage 兜底）
-     ======================================================== */
-  var dbPromise = null;
-  function openDB() {
-    if (dbPromise) return dbPromise;
-    dbPromise = new Promise(function (resolve, reject) {
-      if (!window.indexedDB) { reject(new Error('no indexedDB')); return; }
-      var req;
-      try { req = indexedDB.open(DB_NAME, DB_VER); } catch (e) { reject(e); return; }
-      req.onupgradeneeded = function () {
-        var db = req.result;
-        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
-      };
-      req.onsuccess = function () { resolve(req.result); };
-      req.onerror = function () { reject(req.error); };
-      req.onblocked = function () { reject(new Error('blocked')); };
-    });
-    return dbPromise;
-  }
-  function idbSet(key, val) {
-    return openDB().then(function (db) {
-      return new Promise(function (res, rej) {
-        var tx = db.transaction(STORE, 'readwrite');
-        tx.objectStore(STORE).put(val, key);
-        tx.oncomplete = function () { res(); };
-        tx.onerror = function () { rej(tx.error); };
-      });
-    });
-  }
-  function idbGet(key) {
-    return openDB().then(function (db) {
-      return new Promise(function (res, rej) {
-        var tx = db.transaction(STORE, 'readonly');
-        var q = tx.objectStore(STORE).get(key);
-        q.onsuccess = function () { res(q.result); };
-        q.onerror = function () { rej(q.error); };
-      });
-    });
-  }
-
-  var persistWarned = false;
-  function persist() {
-    var data = JSON.parse(JSON.stringify(state));
-    try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { /* 配额满或隐私模式 */ }
-    idbSet('state', data).catch(function () {
-      if (!persistWarned) { persistWarned = true; }
-    });
-    if (navigator.storage && navigator.storage.persist) {
-      navigator.storage.persist().catch(function () {});
-    }
-  }
-
-  /* ========================================================
-     3. 状态与计算
-     ======================================================== */
-  var state = null;
-
-  function demoState() {
-    function d(i) {
-      var x = new Date(); x.setDate(x.getDate() - i);
-      return x.toISOString().slice(0, 10);
-    }
-    return {
-      trip: {
-        name: '关西赏枫 5 日', destination: '大阪 · 京都 · 奈良',
-        start: d(4), end: d(0), base: 'CNY',
-        members: [{ id: 'A', name: '阿星' }, { id: 'B', name: '小鹿' }],
-        currencies: [{ code: 'CNY', rate: 1 }, { code: 'JPY', rate: 0.048 }]
-      },
-      expenses: [
-        { id: 'demo1', date: d(4), title: '往返机票', cat: 'transport', amount: 3860, currency: 'CNY', payer: 'A', mode: 'equal', ratioA: 50, note: '', createdAt: 1 },
-        { id: 'demo2', date: d(4), title: '京都町屋民宿 4 晚', cat: 'stay', amount: 52400, currency: 'JPY', payer: 'A', mode: 'equal', ratioA: 50, note: '含清洁费', createdAt: 2 },
-        { id: 'demo3', date: d(3), title: '和牛烧肉', cat: 'food', amount: 15800, currency: 'JPY', payer: 'B', mode: 'custom', ratioA: 70, note: '小鹿多吃了两盘', createdAt: 3 },
-        { id: 'demo4', date: d(2), title: '环球影城门票', cat: 'ticket', amount: 17600, currency: 'JPY', payer: 'A', mode: 'equal', ratioA: 50, note: '', createdAt: 4 },
-        { id: 'demo5', date: d(1), title: '药妆采购', cat: 'shop', amount: 8900, currency: 'JPY', payer: 'B', mode: 'b', ratioA: 0, note: '各买各的', createdAt: 5 },
-        { id: 'demo6', date: d(0), title: '机场快线', cat: 'transport', amount: 320, currency: 'CNY', payer: 'B', mode: 'equal', ratioA: 50, note: '', createdAt: 6 }
-      ]
-    };
-  }
-
-  function normalize(s) {
-    if (!s || !s.trip || !Array.isArray(s.expenses)) return null;
-    if (!s.trip.members || s.trip.members.length < 2) {
-      s.trip.members = [{ id: 'A', name: '我' }, { id: 'B', name: '同伴' }];
-    }
-    if (!s.trip.currencies || !s.trip.currencies.length) {
-      s.trip.currencies = [{ code: s.trip.base || 'CNY', rate: 1 }];
-    }
-    s.trip.base = s.trip.base || s.trip.currencies[0].code;
-    return s;
-  }
-
-  function rateOf(code) {
-    var c = state.trip.currencies.filter(function (x) { return x.code === code; })[0];
-    return c && Number(c.rate) > 0 ? Number(c.rate) : 1;
-  }
-  function expBase(e) { return Number(e.amount) * rateOf(e.currency); }
-  function nameA() { return state.trip.members[0].name || 'A'; }
-  function nameB() { return state.trip.members[1].name || 'B'; }
-  function days() {
-    var s = state.trip.start, e = state.trip.end;
-    if (!s || !e) return 1;
-    var d = (new Date(e) - new Date(s)) / 86400000 + 1;
-    return d > 0 ? Math.round(d) : 1;
-  }
-  function summarize() {
-    var r = { total: 0, paidA: 0, paidB: 0, bearA: 0, bearB: 0, count: state.expenses.length, byCat: {}, byCur: {}, byDate: {}, balanceA: 0 };
-    state.expenses.forEach(function (e) {
-      var b = expBase(e), ratio = (Number(e.ratioA) || 0) / 100;
-      r.total += b;
-      if (e.payer === 'A') r.paidA += b; else r.paidB += b;
-      r.bearA += b * ratio; r.bearB += b * (1 - ratio);
-      r.byCat[e.cat] = (r.byCat[e.cat] || 0) + b;
-      r.byCur[e.currency] = (r.byCur[e.currency] || 0) + Number(e.amount);
-      r.byDate[e.date] = (r.byDate[e.date] || 0) + b;
-    });
-    r.balanceA = r.paidA - r.bearA;
-    return r;
-  }
-
-  /* ========================================================
-     4. 视图渲染
-     ======================================================== */
-  var currentView = 'list';
-
-  function renderTop() {
-    $('tripName').textContent = state.trip.name || '未命名行程';
-    var bits = [];
-    if (state.trip.destination) bits.push(state.trip.destination);
-    if (state.trip.start) bits.push(state.trip.start + ' → ' + (state.trip.end || '?'));
-    $('tripSub').textContent = bits.join(' · ') || '点右上角设置行程';
-  }
-
-  function renderList() {
-    var s = summarize();
-    $('heroCur').textContent = state.trip.base;
-    $('heroTotal').textContent = money(s.total);
-    $('heroMeta').textContent = '人均 ' + money(s.total / 2) + ' · ' + s.count + ' 笔 · ' + days() + ' 天';
-
-    var hs = $('heroSettle');
-    if (!s.count) {
-      hs.className = 'hero-settle ok';
-      hs.innerHTML = '<span>还没有支出，点右下角 ＋ 记第一笔</span>';
-    } else if (Math.abs(s.balanceA) < 0.01) {
-      hs.className = 'hero-settle ok';
-      hs.innerHTML = '<span>🎉 账目已平，无需转账</span>';
-    } else {
-      var from = s.balanceA > 0 ? nameB() : nameA();
-      var to = s.balanceA > 0 ? nameA() : nameB();
-      hs.className = 'hero-settle';
-      hs.innerHTML = '<span>' + esc(from) + ' <span class="arrow">→</span> ' + esc(to) + '</span>' +
-        '<b>' + money(Math.abs(s.balanceA)) + '</b>';
-    }
-
-    // 筛选
-    var fh = '<button class="fchip' + (filterCat === 'all' ? ' on' : '') + '" data-f="all">全部</button>';
-    CATS.forEach(function (c) {
-      fh += '<button class="fchip' + (filterCat === c.id ? ' on' : '') + '" data-f="' + c.id + '">' + c.icon + ' ' + c.name + '</button>';
-    });
-    $('filters').innerHTML = fh;
-    Array.prototype.forEach.call($('filters').querySelectorAll('[data-f]'), function (b) {
-      b.addEventListener('click', function () {
-        filterCat = this.getAttribute('data-f');
-        renderList();
-      });
-    });
-
-    // 列表
-    var list = state.expenses.filter(function (e) {
-      return filterCat === 'all' || e.cat === filterCat;
-    });
-
-    if (!list.length) {
-      $('listBody').innerHTML = '<div class="empty"><div class="ico">🧳</div><p>' +
-        (state.expenses.length ? '这个分类还没有记录' : '还没有记账，点右下角 ＋ 开始') + '</p></div>';
-      return;
-    }
-
-    var groups = {};
-    list.forEach(function (e) { (groups[e.date] = groups[e.date] || []).push(e); });
-    var dates = Object.keys(groups).sort(function (a, b) { return a < b ? 1 : -1; });
-
-    var html = '';
-    dates.forEach(function (d) {
-      var arr = groups[d].sort(function (x, y) { return (y.createdAt || 0) - (x.createdAt || 0); });
-      var sub = arr.reduce(function (acc, e) { return acc + expBase(e); }, 0);
-      html += '<div class="day-head"><span>' + esc(fmtDate(d)) + '</span><b>' + money(sub) + '</b></div>';
-      arr.forEach(function (e) {
-        var c = CATMAP[e.cat] || CATMAP.other;
-        var other = e.currency !== state.trip.base;
-        html += '<div class="item-wrap" data-wrap="' + e.id + '">' +
-          '<button class="item-del" data-del="' + e.id + '">删除</button>' +
-          '<div class="item" data-edit="' + e.id + '">' +
-            '<div class="item-icon" style="background:' + hexA(c.color, .12) + ';color:' + c.color + '">' + c.icon + '</div>' +
-            '<div class="item-body">' +
-              '<div class="item-title">' + esc(e.title) + '</div>' +
-              '<div class="item-sub">' +
-                '<span class="tag ' + (e.payer === 'A' ? 'a' : 'b') + '">' + esc(e.payer === 'A' ? nameA() : nameB()) + ' 付</span>' +
-                '<span>' + esc(splitText(e)) + '</span>' +
-                (e.note ? '<span style="color:#c2cad6">· ' + esc(e.note) + '</span>' : '') +
-              '</div>' +
-            '</div>' +
-            '<div class="item-amt">' + money(e.amount, e.currency) +
-              (other ? '<small>≈ ' + money(expBase(e)) + '</small>' : '') +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      });
-    });
-    $('listBody').innerHTML = html;
-
-    Array.prototype.forEach.call($('listBody').querySelectorAll('[data-edit]'), function (el) {
-      el.addEventListener('click', function () {
-        if (this.parentNode.classList.contains('swiped')) { closeSwipe(this.parentNode); return; }
-        openSheet(this.getAttribute('data-edit'));
-      });
-    });
-    Array.prototype.forEach.call($('listBody').querySelectorAll('[data-del]'), function (el) {
-      el.addEventListener('click', function () {
-        var id = this.getAttribute('data-del');
-        var e = state.expenses.filter(function (x) { return x.id === id; })[0];
-        if (!e) return;
-        if (!window.confirm('删除「' + e.title + '」？')) return;
-        state.expenses = state.expenses.filter(function (x) { return x.id !== id; });
-        persist(); renderAll(); toast('已删除');
-      });
-    });
-    bindSwipe($('listBody'));
-  }
-
-  function splitText(e) {
-    var a = Number(e.ratioA) || 0;
-    if (a >= 99.5) return nameA() + ' 全担';
-    if (a <= 0.5) return nameB() + ' 全担';
-    if (Math.abs(a - 50) < 0.5) return 'AA 制';
-    return nameA() + ' ' + pct(a) + ' / ' + nameB() + ' ' + pct(100 - a);
-  }
-
-  /* 左滑删除 */
-  var swipedEl = null;
-  function closeSwipe(wrap) {
-    if (!wrap) return;
-    wrap.classList.remove('swiped');
-    var it = wrap.querySelector('.item');
-    if (it) it.style.transform = '';
-    if (swipedEl === wrap) swipedEl = null;
-  }
-  function bindSwipe(container) {
-    var sx = 0, sy = 0, wrap = null, dx = 0, active = false, locked = false;
-    container.addEventListener('touchstart', function (ev) {
-      var w = ev.target.closest ? ev.target.closest('.item-wrap') : null;
-      if (!w) return;
-      if (swipedEl && swipedEl !== w) closeSwipe(swipedEl);
-      wrap = w; sx = ev.touches[0].clientX; sy = ev.touches[0].clientY;
-      dx = 0; active = true; locked = false;
-    }, { passive: true });
-    container.addEventListener('touchmove', function (ev) {
-      if (!active || !wrap) return;
-      var mx = ev.touches[0].clientX - sx, my = ev.touches[0].clientY - sy;
-      if (!locked) {
-        if (Math.abs(my) > Math.abs(mx)) { active = false; return; }
-        if (Math.abs(mx) < 6) return;
-        locked = true;
-      }
-      dx = Math.max(-92, Math.min(0, mx - (wrap.classList.contains('swiped') ? 88 : 0)));
-      var it = wrap.querySelector('.item');
-      if (it) { it.style.transition = 'none'; it.style.transform = 'translateX(' + dx + 'px)'; }
-    }, { passive: true });
-    container.addEventListener('touchend', function () {
-      if (!active || !wrap) { active = false; return; }
-      active = false;
-      var it = wrap.querySelector('.item');
-      if (!it) return;
-      it.style.transition = 'transform .22s cubic-bezier(.2,.8,.2,1)';
-      if (dx < -44) { it.style.transform = 'translateX(-88px)'; wrap.classList.add('swiped'); swipedEl = wrap; }
-      else { it.style.transform = ''; wrap.classList.remove('swiped'); if (swipedEl === wrap) swipedEl = null; }
-    });
-  }
-
-  function renderStats() {
-    var s = summarize();
-    $('statSub').textContent = s.count ? ('共 ' + money(s.total)) : '';
-
-    var rows = CATS.map(function (c) { return { c: c, v: s.byCat[c.id] || 0 }; })
-      .filter(function (x) { return x.v > 0; })
-      .sort(function (a, b) { return b.v - a.v; });
-
-    if (!rows.length) {
-      $('catBars').innerHTML = '<div style="color:#a2adbd;font-size:13px">暂无数据</div>';
-    } else {
-      var max = rows[0].v;
-      $('catBars').innerHTML = rows.map(function (r) {
-        var share = s.total > 0 ? r.v / s.total * 100 : 0;
-        return '<div class="bar-row">' +
-          '<div class="bar-top"><span>' + r.c.icon + ' ' + r.c.name + '</span>' +
-          '<b>' + money(r.v) + '<em>' + pct(share) + '</em></b></div>' +
-          '<div class="bar-track"><i style="width:' + Math.max(3, r.v / max * 100) + '%;background:' + r.c.color + '"></i></div>' +
-          '</div>';
-      }).join('');
-    }
-
-    // 每日
-    var dk = Object.keys(s.byDate).sort();
-    if (dk.length > 14) dk = dk.slice(-14);
-    if (!dk.length) {
-      $('dayChart').innerHTML = '<div style="color:#a2adbd;font-size:13px;margin:auto">暂无数据</div>';
-    } else {
-      var dmax = Math.max.apply(null, dk.map(function (k) { return s.byDate[k]; }));
-      $('dayChart').innerHTML = dk.map(function (k) {
-        var h = Math.max(4, s.byDate[k] / dmax * 88);
-        var mmdd = k.slice(5).replace('-', '/');
-        return '<div class="dc-col" title="' + k + ' ' + money(s.byDate[k]) + '">' +
-          '<div class="dc-bar" style="height:' + h + 'px"></div>' +
-          '<div class="dc-lab">' + mmdd + '</div></div>';
-      }).join('');
-    }
-
-    // 已付 / 应担
-    var maxv = Math.max(s.paidA, s.paidB, s.bearA, s.bearB, 1);
-    function cmp(name, paid, bear) {
-      return '<div class="cmp-row"><span class="nm">' + esc(name) + '</span>' +
-        '<div class="cmp-bar"><i style="width:' + (paid / maxv * 100) + '%;background:#3b6ef6"></i></div>' +
-        '<span class="vv" style="color:#3b6ef6">' + money(paid) + '</span></div>' +
-        '<div class="cmp-row"><span class="nm" style="color:#a2adbd;font-weight:600">应担</span>' +
-        '<div class="cmp-bar"><i style="width:' + (bear / maxv * 100) + '%;background:#c9d8ff"></i></div>' +
-        '<span class="vv" style="color:#8b97a8">' + money(bear) + '</span></div>';
-    }
-    $('cmpBox').innerHTML = cmp(nameA(), s.paidA, s.bearA) + '<div style="height:10px"></div>' + cmp(nameB(), s.paidB, s.bearB);
-
-    // 币种
-    var ck = Object.keys(s.byCur).sort(function (a, b) { return s.byCur[b] - s.byCur[a]; });
-    $('curPills').innerHTML = ck.length ? ck.map(function (k) {
-      return '<div class="cur-pill">' + esc(k) + '<b>' + money(s.byCur[k], k) + '</b></div>';
-    }).join('') : '<div style="color:#a2adbd;font-size:13px">暂无数据</div>';
-  }
-
-  function renderSettle() {
-    var s = summarize();
-    var box = $('settleBig');
-    if (!s.count) {
-      box.innerHTML = '<div class="lbl">本次结算</div><div class="settle-amt ok">还没有记录</div>' +
-        '<div class="settle-hint">记下支出后，这里会自动算出谁该给谁多少钱</div>';
-    } else if (Math.abs(s.balanceA) < 0.01) {
-      box.innerHTML = '<div class="lbl">本次结算</div><div class="settle-amt ok">🎉 账目已平</div>' +
-        '<div class="settle-hint">两人已付与应担完全一致，不用转账</div>';
-    } else {
-      var from = s.balanceA > 0 ? nameB() : nameA();
-      var to = s.balanceA > 0 ? nameA() : nameB();
-      box.innerHTML = '<div class="lbl">本次结算</div>' +
-        '<div class="settle-flow">' + esc(from) + ' 应付 ' + esc(to) + '</div>' +
-        '<div class="settle-amt">' + money(Math.abs(s.balanceA)) + '</div>' +
-        '<div class="settle-hint">' + esc(from) + ' 转给对方这笔钱，账目两清</div>';
-    }
-
-    $('memberCards').innerHTML =
-      mcard('a', 'A', nameA(), s.paidA, s.bearA) + mcard('b', 'B', nameB(), s.paidB, s.bearB);
-
-    function mcard(cls, id, name, paid, bear) {
-      var bal = paid - bear;
-      var isPos = bal > 0.005, isNeg = bal < -0.005;
-      return '<div class="mcard ' + cls + '">' +
-        '<div class="n"><i>' + id + '</i>' + esc(name) + '</div>' +
-        '<div class="r"><span>已付</span><b>' + money(paid) + '</b></div>' +
-        '<div class="r"><span>应担</span><b>' + money(bear) + '</b></div>' +
-        '<div class="r net"><span>' + (isPos ? '应收' : isNeg ? '应付' : '结余') + '</span>' +
-        '<b class="' + (isPos ? 'pos' : isNeg ? 'neg' : '') + '">' +
-        (isPos ? '+' : isNeg ? '−' : '') + money(Math.abs(bal)) + '</b></div>' +
-        '</div>';
-    }
-  }
-
-  function renderSettings() {
-    $('sName').value = state.trip.name || '';
-    $('sDest').value = state.trip.destination || '';
-    $('sStart').value = state.trip.start || '';
-    $('sEnd').value = state.trip.end || '';
-    $('sNameA').value = nameA();
-    $('sNameB').value = nameB();
-    $('sBase').innerHTML = Object.keys(CUR).map(function (k) {
-      return '<option value="' + k + '"' + (k === state.trip.base ? ' selected' : '') + '>' + k + ' · ' + CUR[k].name + '</option>';
-    }).join('');
-    renderCurRows();
-
-    var last = '';
-    try { last = localStorage.getItem(EXPORT_KEY) || ''; } catch (e) {}
-    $('storageTip').innerHTML = '共 ' + state.expenses.length + ' 笔记录 · 数据保存在本机<br>' +
-      '上次导出：' + (last ? esc(last) : '<span style="color:#e5484d">还没导出过，建议备份一次</span>');
-  }
-
-  function renderCurRows() {
-    var t = state.trip;
-    $('curRows').innerHTML = t.currencies.map(function (c, i) {
-      var isBase = c.code === t.base;
-      return '<div class="cur-row' + (isBase ? ' base' : '') + '">' +
-        '<select data-c="' + i + '">' + Object.keys(CUR).map(function (k) {
-          return '<option value="' + k + '"' + (k === c.code ? ' selected' : '') + '>' + k + ' ' + CUR[k].name + '</option>';
-        }).join('') + '</select>' +
-        '<input type="number" step="0.0001" min="0" data-r="' + i + '" value="' + c.rate + '"' +
-          (isBase ? ' disabled' : ' placeholder="汇率"') + '>' +
-        '<button class="x" data-x="' + i + '"' + (isBase ? ' disabled style="opacity:.25"' : '') + '>✕</button>' +
-        '</div>';
-    }).join('');
-    Array.prototype.forEach.call($('curRows').querySelectorAll('[data-x]'), function (b) {
-      b.addEventListener('click', function () {
-        var i = Number(this.getAttribute('data-x'));
-        var code = state.trip.currencies[i].code;
-        if (state.expenses.some(function (e) { return e.currency === code; })) {
-          toast('「' + code + '」已有记录，不能移除');
-          return;
-        }
-        state.trip.currencies.splice(i, 1);
-        renderCurRows();
-      });
-    });
-  }
-
-  function applySettings() {
-    var t = state.trip;
-    t.name = $('sName').value.trim() || '未命名行程';
-    t.destination = $('sDest').value.trim();
-    t.start = $('sStart').value;
-    t.end = $('sEnd').value;
-    t.members = [{ id: 'A', name: $('sNameA').value.trim() || 'A' },
-                 { id: 'B', name: $('sNameB').value.trim() || 'B' }];
-    t.base = $('sBase').value;
-
-    var rows = $('curRows').querySelectorAll('.cur-row');
-    var list = [];
-    Array.prototype.forEach.call(rows, function (row) {
-      var code = row.querySelector('select').value;
-      var rate = code === t.base ? 1 : (parseFloat(row.querySelector('input').value) || 1);
-      if (!list.some(function (x) { return x.code === code; })) list.push({ code: code, rate: rate });
-    });
-    if (!list.some(function (x) { return x.code === t.base; })) list.unshift({ code: t.base, rate: 1 });
-    t.currencies = list;
-
-    persist();
-    renderAll(true);
-  }
-
-  function renderAll(skipSettings) {
-    renderTop();
-    renderList();
-    renderStats();
-    renderSettle();
-    if (!skipSettings && currentView === 'settings') renderSettings();
-  }
-
-  /* ========================================================
-     5. 记账面板
-     ======================================================== */
-  var editingId = null;
-  var formCat = 'food';
-  var formPayer = 'A';
-  var formMode = 'equal';
-  var formRatio = 50;
-
-  function defaultDate() {
-    var t = todayStr(), s = state.trip.start, e = state.trip.end;
-    if (s && t < s) return s;
-    if (e && t > e) return e;
-    return t;
-  }
-
-  function openSheet(id) {
-    editingId = id || null;
-    var e = id ? state.expenses.filter(function (x) { return x.id === id; })[0] : null;
-
-    $('shTitle').textContent = e ? '修改记录' : '记一笔';
-    $('delWrap').style.display = e ? '' : 'none';
-
-    if (e) {
-      $('fAmount').value = e.amount;
-      $('fTitle').value = e.title;
-      $('fNote').value = e.note || '';
-      $('fDate').value = e.date;
-      formCat = e.cat || 'other';
-      formPayer = e.payer;
-      formMode = e.mode || 'equal';
-      formRatio = Number(e.ratioA) || 0;
-    } else {
-      $('fAmount').value = '';
-      $('fTitle').value = '';
-      $('fNote').value = '';
-      $('fDate').value = defaultDate();
-      formCat = 'food';
-      formPayer = 'A';
-      formMode = 'equal';
-      formRatio = 50;
-    }
-
-    buildCurrencySelect(e ? e.currency : null);
-    buildCatGrid();
-    buildPayerSeg();
-    $('fRatio').value = formRatio;
-    buildSplitChips();
-    updateConv();
-
-    $('sheet').classList.add('open');
-    document.body.classList.add('lock');
-    $('fab').classList.add('hide');
-    setTimeout(function () {
-      if (!e) $('fAmount').focus();
-    }, 320);
-  }
-
-  function closeSheet() {
-    $('sheet').classList.remove('open');
-    document.body.classList.remove('lock');
-    $('fab').classList.toggle('hide', currentView !== 'list');
-    editingId = null;
-    document.activeElement && document.activeElement.blur && document.activeElement.blur();
-  }
-
-  function buildCurrencySelect(prefer) {
-    var sel = $('fCurrency');
-    sel.innerHTML = state.trip.currencies.map(function (c) {
-      return '<option value="' + c.code + '">' + c.code + '</option>';
-    }).join('');
-    var code = prefer || sel.value;
-    var has = state.trip.currencies.some(function (c) { return c.code === code; });
-    sel.value = has ? code : state.trip.base;
-  }
-
-  function buildCatGrid() {
-    $('catGrid').innerHTML = CATS.map(function (c) {
-      return '<button class="cat-cell' + (formCat === c.id ? ' on' : '') + '" data-cat="' + c.id + '">' +
-        '<span class="ci">' + c.icon + '</span><span class="cn">' + c.name + '</span></button>';
-    }).join('');
-    Array.prototype.forEach.call($('catGrid').querySelectorAll('[data-cat]'), function (b) {
-      b.addEventListener('click', function () {
-        formCat = this.getAttribute('data-cat');
-        buildCatGrid();
-      });
-    });
-  }
-
-  function buildPayerSeg() {
-    var html = '';
-    ['A', 'B'].forEach(function (p) {
-      html += '<button class="' + (formPayer === p ? 'on' : '') + '" data-p="' + p + '">' +
-        esc(p === 'A' ? nameA() : nameB()) + '</button>';
-    });
-    $('payerSeg').innerHTML = html;
-    Array.prototype.forEach.call($('payerSeg').querySelectorAll('[data-p]'), function (b) {
-      b.addEventListener('click', function () {
-        formPayer = this.getAttribute('data-p');
-        buildPayerSeg();
-        buildSplitChips();
-      });
-    });
-  }
-
-  function buildSplitChips() {
-    var opts = [
-      { k: 'equal', t: '⚖️ 平摊' },
-      { k: 'a', t: esc(nameA()) + ' 全担' },
-      { k: 'b', t: esc(nameB()) + ' 全担' },
-      { k: 'custom', t: '✎ 自定义' }
-    ];
-    $('splitChips').innerHTML = opts.map(function (o) {
-      return '<button class="chip' + (formMode === o.k ? ' on' : '') + '" data-m="' + o.k + '">' + o.t + '</button>';
-    }).join('');
-    Array.prototype.forEach.call($('splitChips').querySelectorAll('[data-m]'), function (b) {
-      b.addEventListener('click', function () {
-        formMode = this.getAttribute('data-m');
-        if (formMode === 'equal') formRatio = 50;
-        if (formMode === 'a') formRatio = 100;
-        if (formMode === 'b') formRatio = 0;
-        $('fRatio').value = formRatio;
-        buildSplitChips();
-        syncRatio();
-      });
-    });
-    syncRatio();
-  }
-
-  function syncRatio() {
-    $('ratioBox').className = 'ratio-box' + (formMode === 'custom' ? ' show' : '');
-    $('ratioLeft').textContent = nameA() + ' 承担';
-    $('ratioRight').textContent = pct(formRatio) + ' / ' + esc(nameB()) + ' ' + pct(100 - formRatio);
-  }
-
-  function updateConv() {
-    var raw = $('fAmount').value;
-    var amt = parseFloat(String(raw).replace(/[^\d.]/g, '')) || 0;
-    var code = $('fCurrency').value;
-    if (!amt) { $('convText').innerHTML = ''; return; }
-    if (code === state.trip.base) {
-      $('convText').innerHTML = '结算货币';
-    } else {
-      $('convText').innerHTML = '≈ <b>' + money(amt * rateOf(code)) + '</b>　（1 ' + code + ' = ' + rateOf(code) + ' ' + state.trip.base + '）';
-    }
-  }
-
-  function saveSheet() {
-    var amt = parseFloat(String($('fAmount').value).replace(/[^\d.]/g, ''));
-    if (!(amt > 0)) { toast('请输入金额'); $('fAmount').focus(); return; }
-    var title = $('fTitle').value.trim();
-    if (!title) { toast('请输入项目名称'); $('fTitle').focus(); return; }
-
-    var ratioA = formMode === 'equal' ? 50 : formMode === 'a' ? 100 : formMode === 'b' ? 0 : formRatio;
-    var data = {
-      date: $('fDate').value || todayStr(),
-      title: title,
-      cat: formCat,
-      amount: Math.round(amt * 100) / 100,
-      currency: $('fCurrency').value,
-      payer: formPayer,
-      mode: formMode,
-      ratioA: ratioA,
-      note: $('fNote').value.trim()
-    };
-
-    if (editingId) {
-      state.expenses = state.expenses.map(function (e) {
-        return e.id === editingId ? Object.assign({}, e, data) : e;
-      });
-    } else {
-      data.id = uid();
-      data.createdAt = Date.now();
-      state.expenses.push(data);
-    }
-    persist();
-    closeSheet();
-    renderAll();
-    toast(editingId ? '已保存' : '已记账');
-  }
-
-  /* ========================================================
-     6. 结算文案
-     ======================================================== */
-  function settlementText() {
-    var s = summarize();
-    var L = [];
-    L.push('【' + (state.trip.name || '旅行') + '】账目结算');
-    if (state.trip.start) L.push(state.trip.start + ' ~ ' + (state.trip.end || '') + '，共 ' + days() + ' 天');
-    L.push('');
-    L.push('总支出 ' + money(s.total) + '（人均 ' + money(s.total / 2) + '）');
-    L.push(nameA() + ' 已付 ' + money(s.paidA) + '，应担 ' + money(s.bearA));
-    L.push(nameB() + ' 已付 ' + money(s.paidB) + '，应担 ' + money(s.bearB));
-    L.push('');
-    if (!s.count) L.push('还没有记录');
-    else if (Math.abs(s.balanceA) < 0.01) L.push('✅ 账目已平，无需转账');
-    else if (s.balanceA > 0) L.push('👉 ' + nameB() + ' 应付 ' + nameA() + ' ' + money(s.balanceA));
-    else L.push('👉 ' + nameA() + ' 应付 ' + nameB() + ' ' + money(-s.balanceA));
-    return L.join('\n');
-  }
-
-  function copyText(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () { toast('已复制，去粘贴给对方吧'); },
-        function () { fallbackCopy(text); });
-    } else fallbackCopy(text);
-  }
-  function fallbackCopy(text) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); toast('已复制'); } catch (e) { toast('复制失败，请手动选择'); }
-    document.body.removeChild(ta);
-  }
-
-  /* ========================================================
-     7. Excel (.xlsx) 生成 —— 纯前端，无依赖
-     ======================================================== */
-  var CRC_TABLE = (function () {
-    var t = new Uint32Array(256);
-    for (var n = 0; n < 256; n++) {
-      var c = n;
-      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-      t[n] = c >>> 0;
-    }
-    return t;
-  })();
-  function crc32(buf) {
-    var c = 0xFFFFFFFF;
-    for (var i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
-    return (c ^ 0xFFFFFFFF) >>> 0;
-  }
-  function zipStore(files) {
-    var enc = new TextEncoder();
-    var now = new Date();
-    var dosTime = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
-    var dosDate = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate()) & 0xFFFF;
-    var parts = [], central = [], offset = 0;
-
-    files.forEach(function (f) {
-      var nb = enc.encode(f.name);
-      var data = f.data;
-      var crc = crc32(data);
-      var lh = new Uint8Array(30 + nb.length);
-      var dv = new DataView(lh.buffer);
-      dv.setUint32(0, 0x04034b50, true);
-      dv.setUint16(4, 20, true);
-      dv.setUint16(6, 0x0800, true);
-      dv.setUint16(8, 0, true);
-      dv.setUint16(10, dosTime, true);
-      dv.setUint16(12, dosDate, true);
-      dv.setUint32(14, crc, true);
-      dv.setUint32(18, data.length, true);
-      dv.setUint32(22, data.length, true);
-      dv.setUint16(26, nb.length, true);
-      dv.setUint16(28, 0, true);
-      lh.set(nb, 30);
-      parts.push(lh, data);
-
-      var ch = new Uint8Array(46 + nb.length);
-      var cv = new DataView(ch.buffer);
-      cv.setUint32(0, 0x02014b50, true);
-      cv.setUint16(4, 20, true);
-      cv.setUint16(6, 20, true);
-      cv.setUint16(8, 0x0800, true);
-      cv.setUint16(10, 0, true);
-      cv.setUint16(12, dosTime, true);
-      cv.setUint16(14, dosDate, true);
-      cv.setUint32(16, crc, true);
-      cv.setUint32(20, data.length, true);
-      cv.setUint32(24, data.length, true);
-      cv.setUint16(28, nb.length, true);
-      cv.setUint16(30, 0, true);
-      cv.setUint16(32, 0, true);
-      cv.setUint16(34, 0, true);
-      cv.setUint16(36, 0, true);
-      cv.setUint32(38, 0, true);
-      cv.setUint32(42, offset, true);
-      ch.set(nb, 46);
-      central.push(ch);
-
-      offset += lh.length + data.length;
-    });
-
-    var cdSize = central.reduce(function (a, b) { return a + b.length; }, 0);
-    var end = new Uint8Array(22);
-    var ev = new DataView(end.buffer);
-    ev.setUint32(0, 0x06054b50, true);
-    ev.setUint16(8, files.length, true);
-    ev.setUint16(10, files.length, true);
-    ev.setUint32(12, cdSize, true);
-    ev.setUint32(16, offset, true);
-
-    var total = offset + cdSize + 22;
-    var out = new Uint8Array(total);
-    var p = 0;
-    parts.forEach(function (x) { out.set(x, p); p += x.length; });
-    central.forEach(function (x) { out.set(x, p); p += x.length; });
-    out.set(end, p);
-    return out;
-  }
-
-  function xmlEsc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (m) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[m];
-    });
-  }
-  function colName(n) {
-    var s = '';
-    while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }
-    return s;
-  }
-  function S(v, s) { return { v: v == null ? '' : String(v), t: 's', s: s || 2 }; }
-  function H(v) { return { v: v, t: 's', s: 1 }; }
-  function N(v, s) { return { v: Number(v) || 0, t: 'n', s: s || 3 }; }
-
-  function sheetXml(rows, widths, freeze) {
-    var body = '';
-    for (var r = 0; r < rows.length; r++) {
-      body += '<row r="' + (r + 1) + '">';
-      for (var c = 0; c < rows[r].length; c++) {
-        var cell = rows[r][c];
-        if (cell == null) continue;
-        var ref = colName(c + 1) + (r + 1);
-        if (cell.t === 'n') {
-          body += '<c r="' + ref + '" s="' + cell.s + '"><v>' + (isFinite(cell.v) ? cell.v : 0) + '</v></c>';
-        } else {
-          body += '<c r="' + ref + '" t="inlineStr" s="' + cell.s + '"><is><t xml:space="preserve">' +
-            xmlEsc(cell.v) + '</t></is></c>';
-        }
-      }
-      body += '</row>';
-    }
-    var cols = '';
-    if (widths && widths.length) {
-      cols = '<cols>' + widths.map(function (w, i) {
-        return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>';
-      }).join('') + '</cols>';
-    }
-    var pane = freeze ? '<sheetViews><sheetView workbookViewId="0">' +
-      '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' +
-      '</sheetView></sheetViews>' : '<sheetViews><sheetView workbookViewId="0"/></sheetViews>';
-    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
-      pane + cols + '<sheetData>' + body + '</sheetData></worksheet>';
-  }
-
-  function buildXlsx() {
-    var s = summarize();
-    var trip = state.trip;
-    var enc = new TextEncoder();
-
-    /* ---- Sheet1 明细 ---- */
-    var r1 = [[H('日期'), H('项目'), H('分类'), H('币种'), H('金额'), H('汇率'),
-      H('折合 ' + trip.base), H('付款人'), H('分摊方式'), H(nameA() + ' 承担'), H(nameB() + ' 承担'), H('备注')]];
-    state.expenses.slice().sort(function (a, b) {
-      return a.date === b.date ? (a.createdAt || 0) - (b.createdAt || 0) : (a.date < b.date ? -1 : 1);
-    }).forEach(function (e) {
-      var base = expBase(e), ratio = (Number(e.ratioA) || 0) / 100;
-      r1.push([
-        S(e.date), S(e.title), S((CATMAP[e.cat] || CATMAP.other).name), S(e.currency),
-        N(e.amount), N(rateOf(e.currency), 6), N(base),
-        S(e.payer === 'A' ? nameA() : nameB()), S(splitText(e)),
-        N(base * ratio), N(base * (1 - ratio)), S(e.note || '')
-      ]);
-    });
-    var blank = [];
-    for (var i = 0; i < 11; i++) blank.push(null);
-    r1.push(blank);
-    r1.push([S('合计', 5), S(''), S(''), S(''), S(''), S(''), N(s.total, 5), S(''), S(''), N(s.bearA, 5), N(s.bearB, 5), S('')]);
-    r1.push([S('结算', 5),
-      S(Math.abs(s.balanceA) < 0.01 ? '账目已平，无需转账'
-        : (s.balanceA > 0 ? nameB() + ' 付给 ' + nameA() + ' ' + money(s.balanceA)
-          : nameA() + ' 付给 ' + nameB() + ' ' + money(-s.balanceA)), 5),
-      S(''), S(''), S(''), S(''), N(Math.abs(s.balanceA), 5), S(''), S(''), S(''), S(''), S('')]);
-
-    var w1 = [12, 24, 10, 8, 12, 9, 13, 10, 16, 12, 12, 20];
-
-    /* ---- Sheet2 结算 ---- */
-    var r2 = [];
-    r2.push([S('行程', 4), S(trip.name || '', 4)]);
-    r2.push([S('目的地'), S(trip.destination || '')]);
-    r2.push([S('日期'), S((trip.start || '') + ' ~ ' + (trip.end || '') + '（' + days() + ' 天）')]);
-    r2.push([S('结算货币'), S(trip.base)]);
-    r2.push(blank.slice(0, 4));
-    r2.push([H('指标'), H('数值')]);
-    r2.push([S('总支出'), N(s.total)]);
-    r2.push([S('人均'), N(s.total / 2)]);
-    r2.push([S('笔数'), N(s.count)]);
-    r2.push([S('日均'), N(s.total / days())]);
-    r2.push(blank.slice(0, 4));
-    r2.push([H('成员'), H('已付'), H('应承担'), H('结余')]);
-    r2.push([S(nameA()), N(s.paidA), N(s.bearA), N(s.paidA - s.bearA)]);
-    r2.push([S(nameB()), N(s.paidB), N(s.bearB), N(s.paidB - s.bearB)]);
-    r2.push(blank.slice(0, 4));
-    r2.push([S('结算结果', 5),
-      S(Math.abs(s.balanceA) < 0.01 ? '账目已平，无需转账' :
-        (s.balanceA > 0 ? nameB() + ' 应付 ' + nameA() + ' ' + money(s.balanceA)
-          : nameA() + ' 应付 ' + nameB() + ' ' + money(-s.balanceA)), 5)]);
-
-    var w2 = [16, 22, 16, 16];
-
-    /* ---- Sheet3 分类 & 币种 ---- */
-    var r3 = [[H('分类'), H('金额(' + trip.base + ')'), H('占比')]];
-    var catRows = CATS.map(function (c) { return { name: c.name, v: s.byCat[c.id] || 0 }; })
-      .filter(function (x) { return x.v > 0; })
-      .sort(function (a, b) { return b.v - a.v; });
-    catRows.forEach(function (c) {
-      r3.push([S(c.name), N(c.v), S(s.total > 0 ? pct(c.v / s.total * 100) : '0%')]);
-    });
-    r3.push([S('合计', 5), N(s.total, 5), S('100%', 5)]);
-    r3.push(blank.slice(0, 3));
-    r3.push([H('币种'), H('原币金额'), H('折合 ' + trip.base)]);
-    Object.keys(s.byCur).sort(function (a, b) { return s.byCur[b] - s.byCur[a]; }).forEach(function (k) {
-      r3.push([S(k), N(s.byCur[k]), N(s.byCur[k] * rateOf(k))]);
-    });
-    var w3 = [16, 18, 14];
-
-    /* ---- 组装 ---- */
-    var styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
-      '<numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.00"/>' +
-      '<numFmt numFmtId="165" formatCode="0.0000"/></numFmts>' +
-      '<fonts count="4">' +
-      '<font><sz val="11"/><color theme="1"/><name val="等线"/></font>' +
-      '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="等线"/></font>' +
-      '<font><b/><sz val="14"/><color rgb="FF0F172A"/><name val="等线"/></font>' +
-      '<font><b/><sz val="11"/><color rgb="FF0F172A"/><name val="等线"/></font>' +
-      '</fonts>' +
-      '<fills count="4">' +
-      '<fill><patternFill patternType="none"/></fill>' +
-      '<fill><patternFill patternType="gray125"/></fill>' +
-      '<fill><patternFill patternType="solid"><fgColor rgb="FF3B6EF6"/><bgColor indexed="64"/></patternFill></fill>' +
-      '<fill><patternFill patternType="solid"><fgColor rgb="FFEEF3FF"/><bgColor indexed="64"/></patternFill></fill>' +
-      '</fills>' +
-      '<borders count="2">' +
-      '<border><left/><right/><top/><bottom/><diagonal/></border>' +
-      '<border><left style="thin"><color rgb="FFDCE4F0"/></left><right style="thin"><color rgb="FFDCE4F0"/></right>' +
-      '<top style="thin"><color rgb="FFDCE4F0"/></top><bottom style="thin"><color rgb="FFDCE4F0"/></bottom><diagonal/></border>' +
-      '</borders>' +
-      '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
-      '<cellXfs count="7">' +
-      '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
-      '<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>' +
-      '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>' +
-      '<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>' +
-      '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
-      '<xf numFmtId="164" fontId="3" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>' +
-      '<xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>' +
-      '</cellXfs>' +
-      '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
-      '</styleSheet>';
-
-    var ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
-      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
-      '<Default Extension="xml" ContentType="application/xml"/>' +
-      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
-      '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
-      '<Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
-      '<Override PartName="/xl/worksheets/sheet3.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
-      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
-      '</Types>';
-
-    var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' +
-      '</Relationships>';
-
-    var wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
-      'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>' +
-      '<sheet name="支出明细" sheetId="1" r:id="rId1"/>' +
-      '<sheet name="结算汇总" sheetId="2" r:id="rId2"/>' +
-      '<sheet name="分类统计" sheetId="3" r:id="rId3"/>' +
-      '</sheets></workbook>';
-
-    var wbRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' +
-      '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>' +
-      '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet3.xml"/>' +
-      '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
-      '</Relationships>';
-
-    return zipStore([
-      { name: '[Content_Types].xml', data: enc.encode(ct) },
-      { name: '_rels/.rels', data: enc.encode(rels) },
-      { name: 'xl/workbook.xml', data: enc.encode(wb) },
-      { name: 'xl/_rels/workbook.xml.rels', data: enc.encode(wbRels) },
-      { name: 'xl/styles.xml', data: enc.encode(styles) },
-      { name: 'xl/worksheets/sheet1.xml', data: enc.encode(sheetXml(r1, w1, true)) },
-      { name: 'xl/worksheets/sheet2.xml', data: enc.encode(sheetXml(r2, w2, false)) },
-      { name: 'xl/worksheets/sheet3.xml', data: enc.encode(sheetXml(r3, w3, true)) }
-    ]);
-  }
-
-  /* ========================================================
-     8. 导出 / 导入
-     ======================================================== */
-  function fileStamp() {
-    var d = new Date();
-    var p = function (n) { return n < 10 ? '0' + n : n; };
-    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes());
-  }
-  function safeName(s) { return String(s || '旅行账单').replace(/[\\/:*?"<>|]/g, '_'); }
-
-  function download(blob, filename) {
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 1200);
-    try {
-      localStorage.setItem(EXPORT_KEY, new Date().toLocaleString('zh-CN', { hour12: false }).slice(0, 16));
-    } catch (e) {}
-  }
-
-  function exportXlsx() {
-    if (!state.expenses.length) { toast('还没有记录可以导出'); return; }
-    try {
-      var bytes = buildXlsx();
-      var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      download(blob, safeName(state.trip.name) + '_' + fileStamp() + '.xlsx');
-      toast('Excel 已生成，去「文件/下载」里查看');
-    } catch (e) {
-      toast('导出失败：' + e.message);
-    }
-  }
-
-  function exportCsv() {
-    if (!state.expenses.length) { toast('还没有记录可以导出'); return; }
-    var head = ['日期', '项目', '分类', '币种', '金额', '汇率', '折合' + state.trip.base, '付款人', '分摊方式',
-      nameA() + '承担', nameB() + '承担', '备注'];
-    var lines = [head.join(',')];
-    state.expenses.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (e) {
-      var base = expBase(e), r = (Number(e.ratioA) || 0) / 100;
-      var row = [e.date, e.title, (CATMAP[e.cat] || CATMAP.other).name, e.currency, e.amount,
-        rateOf(e.currency), base.toFixed(2), e.payer === 'A' ? nameA() : nameB(), splitText(e),
-        (base * r).toFixed(2), (base * (1 - r)).toFixed(2), e.note || ''];
-      lines.push(row.map(function (v) {
-        v = String(v == null ? '' : v);
-        return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
-      }).join(','));
-    });
-    var s = summarize();
-    lines.push('');
-    lines.push(['合计', '', '', '', '', '', s.total.toFixed(2), '', '', s.bearA.toFixed(2), s.bearB.toFixed(2), ''].join(','));
-    lines.push(['结算', '', '', '', '', '', Math.abs(s.balanceA).toFixed(2), '', '', '', '',
-      Math.abs(s.balanceA) < 0.01 ? '已结清' : (s.balanceA > 0 ? nameB() + ' 付给 ' + nameA() : nameA() + ' 付给 ' + nameB())].join(','));
-
-    download(new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }),
-      safeName(state.trip.name) + '_' + fileStamp() + '.csv');
-    toast('CSV 已导出');
-  }
-
-  function exportJson() {
-    download(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json;charset=utf-8' }),
-      safeName(state.trip.name) + '_备份_' + fileStamp() + '.json');
-    toast('备份已导出');
-  }
-
-  function importJson(file) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      try {
-        var s = normalize(JSON.parse(reader.result));
-        if (!s) throw new Error('文件格式不正确');
-        if (!window.confirm('导入将覆盖当前全部数据，确定继续？')) return;
-        state = s;
-        persist();
-        renderAll();
-        if (currentView === 'settings') renderSettings();
-        toast('导入成功');
-      } catch (err) {
-        toast('导入失败：' + err.message);
-      }
-    };
-    reader.readAsText(file, 'utf-8');
-  }
-
-  /* ========================================================
-     9. 事件
-     ======================================================== */
-  var filterCat = 'all';
-
-  function switchView(name) {
-    currentView = name;
-    Array.prototype.forEach.call(document.querySelectorAll('.view'), function (v) {
-      v.classList.toggle('active', v.getAttribute('data-view') === name);
-    });
-    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (t) {
-      t.classList.toggle('on', t.getAttribute('data-tab') === name);
-    });
-    if (name === 'settings') renderSettings();
-    $('fab').classList.toggle('hide', name !== 'list');
-    window.scrollTo(0, 0);
-  }
-
-  function bind() {
-    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (t) {
-      t.addEventListener('click', function () { switchView(this.getAttribute('data-tab')); });
-    });
-    $('btnGoSettings').addEventListener('click', function () { switchView('settings'); });
-    $('fab').addEventListener('click', function () { openSheet(null); });
-    $('shCancel').addEventListener('click', closeSheet);
-    $('shSave').addEventListener('click', saveSheet);
-
-    $('fAmount').addEventListener('input', updateConv);
-    $('fCurrency').addEventListener('change', updateConv);
-    $('fRatio').addEventListener('input', function () { formRatio = Number(this.value); syncRatio(); });
-    $('fTitle').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveSheet(); } });
-
-    $('btnCopy').addEventListener('click', function () { copyText(settlementText()); });
-    $('heroSettle').addEventListener('click', function () { switchView('settle'); });
-
-    $('btnXlsx').addEventListener('click', exportXlsx);
-    $('btnCsv').addEventListener('click', exportCsv);
-    $('btnBackup').addEventListener('click', exportJson);
-    $('btnRestore').addEventListener('click', function () { $('fileInput').click(); });
-    $('fileInput').addEventListener('change', function () {
-      if (this.files && this.files[0]) importJson(this.files[0]);
-      this.value = '';
-    });
-
-    $('btnDelete').addEventListener('click', function () {
-      if (!editingId) return;
-      var e = state.expenses.filter(function (x) { return x.id === editingId; })[0];
-      if (!e) return;
-      if (!window.confirm('删除「' + e.title + '」？')) return;
-      state.expenses = state.expenses.filter(function (x) { return x.id !== editingId; });
-      persist(); closeSheet(); renderAll(); toast('已删除');
-    });
-
-    $('btnClear').addEventListener('click', function () {
-      if (!state.expenses.length) { toast('已经是空的了'); return; }
-      if (!window.confirm('清空全部 ' + state.expenses.length + ' 条明细？此操作不可恢复，建议先导出备份。')) return;
-      state.expenses = [];
-      persist(); renderAll(); renderSettings(); toast('已清空');
-    });
-
-    $('btnAddCur').addEventListener('click', function () {
-      var used = state.trip.currencies.map(function (c) { return c.code; });
-      var pick = Object.keys(CUR).filter(function (k) { return used.indexOf(k) === -1; })[0];
-      if (!pick) { toast('常用币种都加过了'); return; }
-      state.trip.currencies.push({ code: pick, rate: 1 });
-      renderCurRows();
-    });
-
-    $('sBase').addEventListener('change', function () {
-      state.trip.base = this.value;
-      var found = state.trip.currencies.some(function (c) { return c.code === state.trip.base; });
-      if (!found) state.trip.currencies.push({ code: state.trip.base, rate: 1 });
-      state.trip.currencies.forEach(function (c) { if (c.code === state.trip.base) c.rate = 1; });
-      renderCurRows();
-    });
-
-    $('btnSaveSettings').addEventListener('click', function () {
-      applySettings();
-      renderSettings();
-      toast('设置已保存');
-    });
-
-    // 改动即自动保存（防忘按保存）
-    var stTimer = null;
-    function queueSave() {
-      clearTimeout(stTimer);
-      stTimer = setTimeout(function () {
-        applySettings();
-        renderAll(true);
-      }, 700);
-    }
-    ['sName', 'sDest', 'sStart', 'sEnd', 'sNameA', 'sNameB'].forEach(function (id) {
-      $(id).addEventListener('input', queueSave);
-      $(id).addEventListener('change', queueSave);
-    });
-    $('curRows').addEventListener('input', queueSave);
-    $('curRows').addEventListener('change', queueSave);
-  }
-
-  /* ========================================================
-     10. 启动
-     ======================================================== */
-  function seedIfEmpty(s) {
-    return s || demoState();
-  }
-
-  function start(s) {
-    state = normalize(seedIfEmpty(s)) || demoState();
-    bind();
-    renderAll();
-    persist();
-
-    // 请求持久化存储，降低被系统清理的概率
-    if (navigator.storage && navigator.storage.persist) {
-      navigator.storage.persist().catch(function () {});
-    }
-  }
-
-  function readLS() {
-    try {
-      var raw = localStorage.getItem(LS_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
-  }
-
-  (function boot() {
-    // 策略：localStorage 是同步的，先用它立刻渲染，绝不白屏；
-    // 只有在没有 localStorage 数据时，才等 IndexedDB（最多 1.5 秒）。
-    var local = readLS();
-    if (local) {
-      start(local);
-    } else {
-      var settled = false;
-      var timer = setTimeout(function () {
-        if (settled) return;
-        settled = true;
-        start(demoState());
-      }, 1500);
-      idbGet('state').then(function (v) {
-        if (settled) return;
-        settled = true; clearTimeout(timer);
-        start(v || demoState());
-      }).catch(function () {
-        if (settled) return;
-        settled = true; clearTimeout(timer);
-        start(demoState());
-      });
-    }
-
-    if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').catch(function () {});
-      });
-    }
-  })();
-
-  // 调试钩子（供自动化测试使用）
-  window.__app = {
-    get state() { return state; },
-    buildXlsx: buildXlsx,
-    summarize: summarize,
-    switchView: switchView
-  };
-})();
-</script>
+<script src="./app.js"></script>
 </body>
 </html>
