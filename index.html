@@ -1,246 +1,255 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="0BsAQCYJsXF53qVjjnlS7j">
-<head data-page-node-id="MXBTXVrTG85JUmzLEDwkfh">
-<meta charset="utf-8" data-page-node-id="uqYUvlK2VGjgxzPLEtYSrV">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" data-page-node-id="2BSzhx7f1xA0mLOOLCYCVW">
-<meta name="color-scheme" content="light" data-page-node-id="G9qt4KwuieeECDj28s8Klq">
-<meta name="theme-color" content="#3b6ef6" data-page-node-id="G2yfdEblRkYRCYMY4qW4Ov">
-<meta name="apple-mobile-web-app-capable" content="yes" data-page-node-id="cw6wDW7EhcdROAPTMY27cW">
-<meta name="mobile-web-app-capable" content="yes" data-page-node-id="Gect35mF9bA2BMaSuyMDkD">
-<meta name="apple-mobile-web-app-status-bar-style" content="default" data-page-node-id="hgCPSuROXPtmUhYVlSutZx">
-<meta name="apple-mobile-web-app-title" content="旅行记账" data-page-node-id="LTw3GLubLV32JQknfnCios">
-<meta name="format-detection" content="telephone=no" data-page-node-id="20x4Dqq3tsqx1IxeY34f79">
-<link rel="manifest" href="./manifest.webmanifest" data-page-node-id="KOkFlR3ItOOcA06CDp6eMq">
-<link rel="apple-touch-icon" href="./icon-192.png" data-page-node-id="iPiEF2ecjPPoMkVDm6YC1t">
-<link rel="stylesheet" href="./styles.css" data-page-node-id="HlSGWWpzf3ZByLPY0YDHPd">
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#3b6ef6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="旅行记账">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="stylesheet" href="./styles.css">
 <title>旅行记账 · 多人分摊</title>
 </head>
-<body data-page-node-id="39GGz6Csgmuo74ahFXrCCP">
-<div id="app" data-page-node-id="Tx0ecEzjgXKxZIHmGXiJoU">
-  <header class="topbar" data-page-node-id="CuZfeElIfHkkcyNEBFwmFQ">
-    <div style="min-width:0" data-page-node-id="ebY2pdD2HtGHxWQH33YnbB">
-      <div class="tb-title" id="tripName" data-page-node-id="JIyP3lAJIm1TN4VyOjkbGq">旅行记账</div>
-      <div class="tb-sub" id="tripSub" data-page-node-id="PBaV5tEmiCZoiTFlfTDCE5"></div>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div style="min-width:0">
+      <div class="tb-title" id="tripName">旅行记账</div>
+      <div class="tb-sub" id="tripSub"></div>
     </div>
-    <div class="tb-right" data-page-node-id="rVVjDLn8SMTr0Oq3p8VnGR">
-      <button class="icon-btn" id="btnGoSettings" aria-label="设置" data-page-node-id="It6G6sYBwkbIKkFazNU03a">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="AVZ7TzTidaXF7q85YHftBL">
-          <path d="M4 7h10M18 7h2M4 17h4M12 17h8" data-page-node-id="ORsVwlGkWOvaiOokwZEu79"/><circle cx="16" cy="7" r="2.4" data-page-node-id="Ba7CxrsD4E5sgWHkhRId4I"/><circle cx="10" cy="17" r="2.4" data-page-node-id="F6xBUk5dK6LQwulsEzc1F0"/>
+    <div class="tb-right">
+      <button class="icon-btn" id="btnGoSettings" aria-label="设置">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.4"/><circle cx="10" cy="17" r="2.4"/>
         </svg>
       </button>
     </div>
   </header>
 
   <!-- ============ 明细 ============ -->
-  <section class="view active" data-view="list" data-page-node-id="AppxN6WPi6KydQTNkfkF1H">
-    <div class="hero" data-page-node-id="pgZbumTVZJ7exuPL7U3WxX">
-      <div class="hero-top" data-page-node-id="zlm8vFKo27W5cRtZQFeLLl">
-        <span class="hero-label" data-page-node-id="G7QzHAGVLXCQOmg9Ehcucv">本次总支出</span>
-        <span class="hero-cur" id="heroCur" data-page-node-id="1FHgkP0DOZEv8bpDIDuGec">CNY</span>
+  <section class="view active" data-view="list">
+    <div class="hero">
+      <div class="hero-top">
+        <span class="hero-label">本次总支出</span>
+        <span class="hero-cur" id="heroCur">CNY</span>
       </div>
-      <div class="hero-amount" id="heroTotal" data-page-node-id="AN4RTSp2ajRmAQDVMjfD9q">¥0.00</div>
-      <div class="hero-meta" id="heroMeta" data-page-node-id="KGzkTu0snfsGTg3HtE422j">人均 ¥0.00 · 0 笔</div>
-      <div class="hero-settle" id="heroSettle" data-page-node-id="nM38YfTe2aNBXDbMweReDP"></div>
+      <div class="hero-amount" id="heroTotal">¥0.00</div>
+      <div class="hero-meta" id="heroMeta">人均 ¥0.00 · 0 笔</div>
+      <div class="hero-settle" id="heroSettle"></div>
     </div>
-    <div class="filter-row" id="filters" data-page-node-id="mW6nA3OeDvi2uMdRGaeNZb"></div>
-    <div id="listBody" data-page-node-id="Kpy2TFdILFqybaDfzYPbER"></div>
+    <div class="filter-row" id="filters"></div>
+    <div id="listBody"></div>
   </section>
 
   <!-- ============ 统计 ============ -->
-  <section class="view" data-view="stats" data-page-node-id="iFrWOlvzLZNGwkHA0sBOGL">
-    <div style="padding-top:6px" data-page-node-id="jk6QYp1QozG4ORL2EwlYUX">
-      <div class="card" data-page-node-id="xobTHPFueeAFDdqDmIjf5Y">
-        <h3 class="card-h" data-page-node-id="Gi683Sex4yGqANyXkdoSjP">📊 分类构成 <span class="sub" id="statSub" data-page-node-id="aYQvz5FC7dctCr7YQRMNDG"></span></h3>
-        <div id="catBars" data-page-node-id="LxvrSU2CuX6H4mRBgYHlFh"></div>
+  <section class="view" data-view="stats">
+    <div style="padding-top:6px">
+      <div class="card">
+        <h3 class="card-h">📊 分类构成 <span class="sub" id="statSub"></span></h3>
+        <div id="catBars"></div>
       </div>
-      <div class="card" data-page-node-id="WC7wo1GL8gDPn0S28o0dtY">
-        <h3 class="card-h" data-page-node-id="HaTNL87OtcmwLbkZ7AQBBF">📅 每日花费</h3>
-        <div class="daychart" id="dayChart" data-page-node-id="i2ih0RAmuZLsnscPCHllps"></div>
+      <div class="card">
+        <h3 class="card-h">📅 每日花费</h3>
+        <div class="daychart" id="dayChart"></div>
       </div>
-      <div class="card" data-page-node-id="AjQCTADspE5uocqSFZonJg">
-        <h3 class="card-h" data-page-node-id="dX2sHPMIRGAzrpRYbSLiSv">👥 已付 / 应担对比</h3>
-        <div id="cmpBox" data-page-node-id="RSqntrhf2LAzYSBlIgiRB3"></div>
+      <div class="card">
+        <h3 class="card-h">👥 已付 / 应担对比</h3>
+        <div id="cmpBox"></div>
       </div>
-      <div class="card" data-page-node-id="VbZ9ueQGoCvhsxBH3QIXwA">
-        <h3 class="card-h" data-page-node-id="xNoD0rOTlmGHRyPrDphu6N">💳 支付方式</h3>
-        <div id="payStats" data-page-node-id="bCKoApjVoMHlXEzNLAEH2s"></div>
+      <div class="card">
+        <h3 class="card-h">💳 支付方式</h3>
+        <div id="payStats"></div>
       </div>
-      <div class="card" data-page-node-id="1bTQehWtohrhzEAsEBZsTR">
-        <h3 class="card-h" data-page-node-id="rfBjCvCmePEHq86GpJpuYX">💱 各币种支出</h3>
-        <div class="cur-list" id="curPills" data-page-node-id="cvYf8CL6RRLnT8SLEbDoY8"></div>
-        <div class="note" data-page-node-id="PiBxg5OMupcXGKXFHe2kJc">折合金额按「设置」里的汇率换算。</div>
+      <div class="card">
+        <h3 class="card-h">💱 各币种支出</h3>
+        <div class="cur-list" id="curPills"></div>
+        <div class="note">折合金额按「设置」里的汇率换算。</div>
       </div>
     </div>
   </section>
 
   <!-- ============ 结算 ============ -->
-  <section class="view" data-view="settle" data-page-node-id="1o4K0ut1zR8GODLPLMwuig">
-    <div style="padding-top:6px" data-page-node-id="kGnXWkbfGDES9xi2wX9mUz">
-      <div class="card settle-big" id="settleBig" data-page-node-id="KzJEB0eqoqjQ49pQlfnFgS"></div>
-      <div class="mcards" id="memberCards" data-page-node-id="REgsD4E8LufPucrN2dl38e"></div>
-      <div class="card" style="padding:4px 16px 8px" data-page-node-id="9IXUwJOCGiOG9fsdFD9ffW">
-        <h3 class="card-h" style="margin:12px 0 2px" data-page-node-id="wtk6iynfYNwvi2DgO9GV7A">💸 转账方案</h3>
-        <div id="transferList" data-page-node-id="Nzh5srgPY7qLOxX60khzEd"></div>
+  <section class="view" data-view="settle">
+    <div style="padding-top:6px">
+      <div class="card settle-big" id="settleBig"></div>
+      <div class="mcards" id="memberCards"></div>
+      <div class="card" style="padding:4px 16px 8px">
+        <h3 class="card-h" style="margin:12px 0 2px">💸 转账方案</h3>
+        <div id="transferList"></div>
       </div>
-      <button class="btn primary" id="btnCopy" data-page-node-id="GCc3CvIFI5b5MJB1gg4Aw3">📋 复制结算结果，发到群里</button>
-      <div class="note" style="text-align:center" data-page-node-id="4gBUkyVpNCmopvmjY31dEJ">
-        结余 = 已付 − 应担。正数该收钱，负数该付钱。<br data-page-node-id="L3MDoHZ5upYewPnLsu95Tq">
+      <button class="btn primary" id="btnCopy">📋 复制结算结果，发到群里</button>
+      <div class="note" style="text-align:center">
+        结余 = 已付 − 应担。正数该收钱，负数该付钱。<br>
         按最少笔数给出转账方案，全部转完即两清。
       </div>
     </div>
   </section>
 
   <!-- ============ 设置 ============ -->
-  <section class="view" data-view="settings" data-page-node-id="66efCq2fnzowCicT4jMZ0p">
-    <div style="padding-top:6px" data-page-node-id="KtfxeyXqINfCdkgMxVYSkX">
-      <div class="set-group" data-page-node-id="PUO9DU8TXQ8qMD6yIL3X3A">
-        <div class="gh" data-page-node-id="HACqb40EGF8HMRoqFMZKTE">行程信息</div>
-        <div class="set-row" data-page-node-id="BE0dA0izAWqbsqDtqEsive"><label data-page-node-id="QDvaR6U3NHalw9snDzJiQw">名称</label><input type="text" id="sName" maxlength="30" placeholder="例如：关西赏枫 5 日" data-page-node-id="nmKWlOcQcPBlPF9LQNYKSw"></div>
-        <div class="set-row" data-page-node-id="YkujvKJaeKUGsIcMDZ9lwF"><label data-page-node-id="02O4ac07T0x00ZfXXpeAMU">目的地</label><input type="text" id="sDest" maxlength="40" placeholder="选填" data-page-node-id="4E3yFTjTaH7oP6DVNGsF7v"></div>
-        <div class="set-row" data-page-node-id="8h6VEhDRs4wz7JRWSla5H6"><label data-page-node-id="dSIsa37fqR4Ed9h3apPHlh">出发</label><input type="date" id="sStart" data-page-node-id="TCZhPnaV8ppwejTtsNiygw"></div>
-        <div class="set-row" data-page-node-id="HP15aXZr6qIaPQvLA4UDw8"><label data-page-node-id="aaPYWF7GAZPfBFwVE9nbMd">返程</label><input type="date" id="sEnd" data-page-node-id="G5NPoaBgJV0NvSb4RVPi1Z"></div>
-        <div class="set-row" data-page-node-id="OAqFEsX4ijiBWOpvTXzCzq"><label data-page-node-id="MaNgXIVegHKrIkXmXg2mUK">结算货币</label><select id="sBase" data-page-node-id="HVeQcO1ON5gZ0fWHMjYuaG"></select></div>
-      </div>
-
-      <div class="set-group" data-page-node-id="ksKrIWp2xIQ7FHWqDz7aF4">
-        <div class="gh" data-page-node-id="wix9KW7RiSgr9EYEP16IJM">同行成员<span class="mcount" id="memberCount" data-page-node-id="MysXhtJgThm0S6lJmGmRpt">2 人</span></div>
-        <div id="memberRows" data-page-node-id="S4A2aRi9GoQtrjHS9AS057"></div>
-        <button class="add-cur" id="btnAddMember" data-page-node-id="xr9DIOtXpiAHYX40CNUJLd">＋ 添加成员</button>
-      </div>
-
-      <div class="set-group" data-page-node-id="dp3wo6RRxSfTx3b56NAUWE">
-        <div class="gh" data-page-node-id="iCLg9hfop262re7U8RUqNq">币种与汇率（1 外币 = ? 结算货币）</div>
-        <div id="curRows" data-page-node-id="qg0Yq45Vl18C4rb5GX9p0U"></div>
-        <button class="add-cur" id="btnAddCur" data-page-node-id="ZfZxfZFUtoXGKlPF4iljqA">＋ 添加币种</button>
-      </div>
-
-      <div class="set-group" data-page-node-id="ouap1bEzyvzlbjEuHqB6qD">
-        <div class="gh" data-page-node-id="WYzMm8Li76pYeczBGrkxyd">支付方式</div>
-        <div id="payRows" data-page-node-id="R8gMIjY5rLO9nqfRDZBkDY"></div>
-        <button class="add-cur" id="btnAddPay" data-page-node-id="1BDacFobBFiD5Pwy4Q6G8Z">＋ 添加支付方式</button>
-      </div>
-
-      <div class="set-group" data-page-node-id="bH2VzGl5EHBUvBjEhWl0ym">
-        <div class="gh" data-page-node-id="WrwmXEXxgfENmMlAKOyssc">数据</div>
-        <div class="data-btns" data-page-node-id="uBQDxStgEi1vuEkPpXHLMt">
-          <button class="btn sm primary" id="btnXlsx" data-page-node-id="oZFWhI835Co52jGqtZnBiG">导出 Excel</button>
-          <button class="btn sm" id="btnCsv" data-page-node-id="rR99MOSgbPJCzkI0sdJmjX">导出 CSV</button>
-          <button class="btn sm" id="btnBackup" data-page-node-id="fzyUGk8U52tshys3c8YxgA">备份 JSON</button>
-          <button class="btn sm" id="btnRestore" data-page-node-id="Kq8sEy5Vz3tfjR6onCPBPN">导入 JSON</button>
+  <section class="view" data-view="settings">
+    <div style="padding-top:6px">
+      <div class="set-group no-clip">
+        <div class="gh">行程信息</div>
+        <div class="set-row"><label>名称</label><input type="text" id="sName" maxlength="30" placeholder="例如：关西赏枫 5 日"></div>
+        <div class="set-row"><label>目的地</label>
+          <div class="dest-wrap">
+            <input type="text" id="sDest" maxlength="40" placeholder="输入国家或城市，自动匹配币种" autocomplete="off">
+            <div class="dest-pop" id="destPop"></div>
+          </div>
         </div>
-        <div class="set-row" style="border-top:1px solid #f2f5fa" data-page-node-id="wYTIjV9439EbDpecacEDam">
-          <div style="font-size:12px;color:#8b97a8;line-height:1.6" id="storageTip" data-page-node-id="QFoNmulMnOQrkWimrpZQjj"></div>
+        <div class="set-row"><label>出发</label><input type="date" id="sStart"></div>
+        <div class="set-row"><label>返程</label><input type="date" id="sEnd"></div>
+        <div class="set-row"><label>结算货币</label><select id="sBase"></select></div>
+      </div>
+
+      <div class="set-group">
+        <div class="gh">同行成员<span class="mcount" id="memberCount">2 人</span></div>
+        <div id="memberRows"></div>
+        <button class="add-cur" id="btnAddMember">＋ 添加成员</button>
+      </div>
+
+      <div class="set-group">
+        <div class="gh">币种与汇率<span class="mcount" id="defCurTip">默认</span></div>
+        <div id="curRows"></div>
+        <button class="add-cur" id="btnAddCur">＋ 添加币种</button>
+      </div>
+
+      <div class="set-group">
+        <div class="gh">支付方式</div>
+        <div id="payRows"></div>
+        <button class="add-cur" id="btnAddPay">＋ 添加支付方式</button>
+      </div>
+
+      <div class="set-group">
+        <div class="gh">数据</div>
+        <div class="data-btns">
+          <button class="btn sm primary" id="btnXlsx">导出 Excel</button>
+          <button class="btn sm" id="btnCsv">导出 CSV</button>
+          <button class="btn sm" id="btnBackup">备份 JSON</button>
+          <button class="btn sm" id="btnRestore">导入 JSON</button>
         </div>
-        <div class="data-btns" style="padding-top:0" data-page-node-id="a8jLNrlU4Je2yi8sHLQuVm">
-          <button class="btn sm danger" id="btnClear" data-page-node-id="NpuUdoVmKRTBCudv45E6nO">清空全部明细</button>
+        <div class="set-row" style="border-top:1px solid #f2f5fa">
+          <div style="font-size:12px;color:#8b97a8;line-height:1.6" id="storageTip"></div>
+        </div>
+        <div class="data-btns" style="padding-top:0">
+          <button class="btn sm danger" id="btnClear">清空全部明细</button>
         </div>
       </div>
 
-      <div class="set-foot" data-page-node-id="SgwjYAJJRex6PKgSF9tyLh">
-        <button class="btn primary" id="btnSaveSettings" data-page-node-id="En9ZaFDjv0poMy30eWOQRo">保存设置</button>
+      <div class="set-foot">
+        <button class="btn primary" id="btnSaveSettings">保存设置</button>
       </div>
 
-      <div class="note" style="text-align:center;padding-bottom:10px" data-page-node-id="QSap2J2Xks3mZmVHOPrrHf">
-        数据保存在本机浏览器（IndexedDB），不上传服务器。<br data-page-node-id="fHNkPwhqp4FXDLhSZdc5Xl">
+      <div class="note" style="text-align:center;padding-bottom:10px">
+        数据保存在本机浏览器（IndexedDB），不上传服务器。<br>
         换手机或清理浏览器数据前，请先「备份 JSON」或「导出 Excel」。
       </div>
     </div>
   </section>
 
-  <div class="fab-wrap" data-page-node-id="PGLnh8i1Uq7ldoBnSO6cOc">
-    <button class="fab" id="fab" aria-label="记一笔" data-page-node-id="FrdEeiNFR0dqvO7NznniAd">＋</button>
+  <div class="fab-wrap">
+    <button class="fab" id="fab" aria-label="记一笔">＋</button>
   </div>
 
-  <nav class="tabbar" id="tabbar" data-page-node-id="4LVsCzswfT8zIaD8C6AfHt">
-    <button class="tab on" data-tab="list" data-page-node-id="4CoJFwXmsyCbaTfBd2XWtg">
-      <svg viewBox="0 0 24 24" data-page-node-id="91tx39yfKrazqUFxGZpskP"><path d="M8 6h12M8 12h12M8 18h12" data-page-node-id="GC8rwd9wIa7sBHg2KKHOFd"/><circle cx="4" cy="6" r="1.2" data-page-node-id="QrWRBJJp0DOCXJ7y5TFfQV"/><circle cx="4" cy="12" r="1.2" data-page-node-id="uRe6bYhObhZjVJvTT3vQJd"/><circle cx="4" cy="18" r="1.2" data-page-node-id="v4s4TUYfG7pZs6AHmsG2F8"/></svg>
+  <nav class="tabbar" id="tabbar">
+    <button class="tab on" data-tab="list">
+      <svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.2"/><circle cx="4" cy="12" r="1.2"/><circle cx="4" cy="18" r="1.2"/></svg>
       明细
     </button>
-    <button class="tab" data-tab="stats" data-page-node-id="R0WgTfN4TZAcGMWWhWkAMg">
-      <svg viewBox="0 0 24 24" data-page-node-id="O453a6qckQBizE9hteXnmb"><path d="M5 20V10M12 20V4M19 20v-7" data-page-node-id="LWJBnEQ5FtXQJN651Uq9Rl"/></svg>
+    <button class="tab" data-tab="stats">
+      <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
       统计
     </button>
-    <button class="tab" data-tab="settle" data-page-node-id="e3gYVLZCnTwrincpPGHvY1">
-      <svg viewBox="0 0 24 24" data-page-node-id="udS7FPmbbNG8CqABD9iSp4"><path d="M4 8h13l-3-3M20 16H7l3 3" data-page-node-id="L08qV4mzA6nsGCZQOzTRqD"/></svg>
+    <button class="tab" data-tab="settle">
+      <svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>
       结算
     </button>
-    <button class="tab" data-tab="settings" data-page-node-id="8kDvVdTfcl14gxpRjJatGz">
-      <svg viewBox="0 0 24 24" data-page-node-id="27HwxjzldkHRJcuGcY0dB6"><circle cx="12" cy="12" r="3.2" data-page-node-id="J19lQtCAlN3ljaXiEUZE8g"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7" data-page-node-id="YiuKLkp7jCCCSiuqcqGTCO"/></svg>
+    <button class="tab" data-tab="settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>
       设置
     </button>
   </nav>
 </div>
 
 <!-- ============ 记账面板 ============ -->
-<div class="sheet" id="sheet" data-page-node-id="nDSIOnxhGf1HVNlmdZItzS">
-  <div class="sheet-head" data-page-node-id="eVjcU7cgnuNDGebMjgB7CE">
-    <button class="sh-btn" id="shCancel" data-page-node-id="YhanCSLP2lBwOAMfHqcooV">取消</button>
-    <div class="sh-title" id="shTitle" data-page-node-id="8PNcLhTzgc2DLDb9dMicZp">记一笔</div>
-    <button class="sh-btn sh-save" id="shSave" data-page-node-id="gOhfI3n2sHk5oGCAldON5k">保存</button>
+<div class="sheet" id="sheet">
+  <div class="sheet-head">
+    <button class="sh-btn" id="shCancel">取消</button>
+    <div class="sh-title" id="shTitle">记一笔</div>
+    <button class="sh-btn sh-save" id="shSave">保存</button>
   </div>
-  <div class="sheet-body" data-page-node-id="dH1WBZuvxH8Y3hnbMMTjIy">
-    <div class="amt-block" data-page-node-id="ijE679188DfMj0W48fDZ1V">
-      <div class="lbl" data-page-node-id="OzbAEmTmJ14fiCzBj35TL3">金额</div>
-      <div class="amt-row" data-page-node-id="5BUWeG3DaLjfDvbcrjJZnH">
-        <input class="amt-input" id="fAmount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off" data-page-node-id="iORFfRBoxEcSkaUfyKCve3">
-        <select class="cur-pick" id="fCurrency" data-page-node-id="8mddA1hqbDsPxTrs2AIK24"></select>
+  <div class="sheet-body">
+    <div class="amt-block">
+      <div class="lbl">金额</div>
+      <div class="amt-row">
+        <input class="amt-input" id="fAmount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off">
+        <select class="cur-pick" id="fCurrency"></select>
       </div>
-      <div class="amt-conv" id="convText" data-page-node-id="SDjnks1EuHFjlOlDbVsPix"></div>
+      <div class="amt-conv" id="convText"></div>
     </div>
 
-    <div class="fld" data-page-node-id="lnLWNhILCLo8WLDqny6Zlh">
-      <label data-page-node-id="32Hwi1VKn0LLKIEb87uBig">分类</label>
-      <div class="cat-grid" id="catGrid" data-page-node-id="5olLB7SegFvOgE38NG1RqD"></div>
+    <div class="fld">
+      <label>分类</label>
+      <div class="cat-grid" id="catGrid"></div>
     </div>
 
-    <div class="fld" data-page-node-id="xtRqs4lLyTjYTKXx4wrfVq">
-      <label data-page-node-id="xtM3elJDpph4CaynB7eBGm">项目</label>
-      <input type="text" id="fTitle" placeholder="例如：机场快线 / 民宿 4 晚" maxlength="40" autocomplete="off" data-page-node-id="8cmJwJ6TLqoqJfck2iKUz2">
+    <div class="fld">
+      <label>项目</label>
+      <input type="text" id="fTitle" placeholder="例如：机场快线 / 民宿 4 晚" maxlength="40" autocomplete="off">
     </div>
 
-    <div class="fld" data-page-node-id="QQZE54HwRFnQ4pcU8wEOgF">
-      <label data-page-node-id="wWBZIAIXPmuTm6bNyOdTxk">谁付的钱</label>
-      <div class="chips-wrap" id="payerRow" data-page-node-id="gmday06PZ2ZztsoZDwscIh"></div>
+    <div class="fld">
+      <label>谁付的钱</label>
+      <div class="chips-wrap" id="payerRow"></div>
     </div>
 
-    <div class="fld" data-page-node-id="iviB3RIdAwlnh0VGGXjzo2">
-      <label data-page-node-id="iGfGOGrqU85BBJMAQP0yji">谁参与分摊 <span id="partHint" style="font-weight:500;color:#a2adbd" data-page-node-id="SIAeX3tbwIigdO5LqpUphD"></span></label>
-      <div class="chips-wrap" id="partRow" data-page-node-id="GKBBU5JziMjB93fO3jTvns"></div>
+    <div class="fld">
+      <label>谁参与分摊 <span id="partHint" style="font-weight:500;color:#a2adbd"></span></label>
+      <div class="chips-wrap" id="partRow"></div>
     </div>
 
-    <div class="fld" data-page-node-id="ctUBf7CZitazyC9oaROUzi">
-      <label data-page-node-id="IiVZv31sOmwSqeLXtO4FUe">怎么分摊</label>
-      <div class="chips" id="splitChips" data-page-node-id="8Ulns1OWBXVBDnTBu7xG8w"></div>
-      <div id="customBox" data-page-node-id="kGAYi06lTGe08VRyh2ECzv"></div>
+    <div class="fld">
+      <label>怎么分摊</label>
+      <div class="chips" id="splitChips"></div>
+      <div id="customBox"></div>
     </div>
 
-    <div class="fld" data-page-node-id="UpuMSE7fP1JEHApTqAm3OU">
-      <label data-page-node-id="7wCsw8zH8533i9csspLhxu">支付方式</label>
-      <div class="chips-wrap" id="payRow" data-page-node-id="kpMR22aBunjmbcve0xNu8l"></div>
-    </div>
-
-    <div class="fld" data-page-node-id="vWnEEsSwx4aDwnF5flqJ5D">
-      <label data-page-node-id="qWQmNqZAlXWWR4WyJmnsoa">日期与时间</label>
-      <div class="dt-row" data-page-node-id="e0gOXFgJJptIHapIVa6DyU">
-        <input type="date" id="fDate" data-page-node-id="1Y1TPJSeWxxoc536fizhmo">
-        <input type="time" id="fTime" data-page-node-id="7TY6AX8yJFzgMFFjTOu0MX">
+    <div class="fld">
+      <label>支付方式</label>
+      <div class="chips-wrap" id="payRow"></div>
+      <div class="pay-add-box" id="payAddBox">
+        <input type="text" id="payAddInput" maxlength="12" placeholder="输入名称，如 微信 / 八达通" autocomplete="off">
+        <button class="btn sm primary" id="payAddOk">添加</button>
       </div>
     </div>
 
-    <div class="fld" data-page-node-id="xrB85rLgOoEswcM8X1Z9TE">
-      <label data-page-node-id="FLb9tJvpwVBp0DGOoMcL8I">备注（选填）</label>
-      <input type="text" id="fNote" placeholder="谁多吃了、谁买的单…" maxlength="60" autocomplete="off" data-page-node-id="CleHFnijelxNqDaUEvnAir">
+    <div class="fld">
+      <label>日期与时间</label>
+      <div class="dt-row">
+        <input type="date" id="fDate">
+        <input type="time" id="fTime">
+      </div>
     </div>
 
-    <div class="fld" id="delWrap" style="display:none" data-page-node-id="kgpQbG73R0hn7kDFw8LwhG">
-      <button class="btn danger" id="btnDelete" data-page-node-id="SX8d61elXWXCZXs42UtWoo">删除这笔</button>
+    <div class="fld">
+      <label>备注（选填）</label>
+      <input type="text" id="fNote" placeholder="谁多吃了、谁买的单…" maxlength="60" autocomplete="off">
     </div>
-    <div class="sheet-tip" data-page-node-id="aTJmawvonVur4HxdFw8tqm">数据自动保存在本机，关闭页面不会丢失</div>
+
+    <div class="fld" id="delWrap" style="display:none">
+      <button class="btn danger" id="btnDelete">删除这笔</button>
+    </div>
+    <div class="sheet-tip">数据自动保存在本机，关闭页面不会丢失</div>
   </div>
 </div>
 
-<div class="toast" id="toast" data-page-node-id="1gDX6qZfiXQw0uASSdq8nT"></div>
-<input type="file" id="fileInput" accept=".json,application/json" hidden data-page-node-id="O6jvabEhNzk9Pr9Yf3NU3y">
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept=".json,application/json" hidden>
 
 <script src="./app.js"></script>
 </body>

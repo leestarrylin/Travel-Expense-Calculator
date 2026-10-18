@@ -177,8 +177,30 @@
   }
   .set-row input:focus{color:var(--primary)}
   .set-row .tail{flex:none;color:#c2cad6;font-size:13px}
-  .cur-row{display:grid;grid-template-columns:1fr 108px 34px;gap:8px;align-items:center;padding:9px 16px;
+
+  /* 目的地联想：这一组不裁切，弹层才能盖住下面的分组 */
+  .set-group.no-clip{overflow:visible;position:relative;z-index:20}
+  .dest-wrap{position:relative;flex:1;min-width:0}
+  .dest-wrap input[type=text]{width:100%}
+  .dest-pop{position:absolute;right:-10px;top:calc(100% + 8px);width:min(300px,80vw);background:#fff;
+            border:1px solid #e6ebf3;border-radius:14px;box-shadow:0 14px 32px rgba(16,24,40,.16);
+            padding:6px;display:none;max-height:250px;overflow:auto;z-index:60}
+  .dest-pop.on{display:block}
+  .dest-item{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;
+             padding:10px;border-radius:10px;font-family:inherit;font-size:13.5px;
+             color:#0f172a;text-align:left;font-weight:500}
+  .dest-item:active{background:#f4f7fd}
+  .dest-item .dc{margin-left:auto;font-size:11px;font-weight:700;color:#2f5fe0;background:#eef3ff;
+                 border-radius:6px;padding:2px 7px;flex:none;white-space:nowrap}
+
+  .cur-row{display:grid;grid-template-columns:18px 1fr 96px 30px;gap:8px;align-items:center;padding:9px 16px;
            border-top:1px solid #f2f5fa}
+  .cur-row .pick{width:18px;height:18px;border-radius:50%;border:1.5px solid #cfd8e6;background:#fff;
+                 padding:0;flex:none;position:relative;transition:.15s}
+  .cur-row .pick.on{border-color:var(--primary);background:var(--primary)}
+  .cur-row .pick.on::after{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;
+                           border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
+  .cur-row.def select{color:#1d4ed8;font-weight:600}
   .cur-row select{border:0;background:transparent;font-size:14px;color:#0f172a;appearance:none;
                   outline:none;font-family:inherit;padding:4px 0}
   .cur-row input{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13.5px;
@@ -297,6 +319,19 @@
 .person.on{border-color:#7ba0fb;background:#eef3ff;color:#1d4ed8;
            box-shadow:0 0 0 1px rgba(59,110,246,.25) inset}
 .person:active{transform:scale(.97)}
+
+/* 「记一笔」内联新增支付方式 */
+.person.pay-add{border-style:dashed;border-color:#c6d5f2;color:var(--primary);background:#f8faff;
+                padding:5px 14px;gap:0}
+.person.pay-add:active{background:#eef3ff}
+.pay-add-box{display:none;margin-top:9px;gap:8px;align-items:center}
+.pay-add-box.on{display:flex;animation:payAddIn .18s ease both}
+.pay-add-box input{flex:1;min-width:0;border:1px solid var(--line);border-radius:11px;padding:10px 12px;
+                   font-size:14px;color:#0f172a;background:#fff;outline:none;font-family:inherit}
+.pay-add-box input::placeholder{color:#a9b3c4}
+.pay-add-box input:focus{border-color:#7ba0fb;box-shadow:0 0 0 3px rgba(59,110,246,.1)}
+.pay-add-box .btn{width:auto;flex:none;padding:10px 16px;border-radius:11px;font-size:13.5px}
+@keyframes payAddIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 
 /* 自定义比例行 */
 .custom-row{display:grid;grid-template-columns:1fr 68px 88px;gap:8px;align-items:center;padding:6px 0}

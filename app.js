@@ -13,26 +13,91 @@
   var EXPORT_KEY = 'travel-split-last-export';
 
   var CATS = [
-    { id: 'transport', name: '交通', icon: '✈️', color: '#3b82f6' },
-    { id: 'stay',      name: '住宿', icon: '🏨', color: '#8b5cf6' },
-    { id: 'food',      name: '餐饮', icon: '🍜', color: '#f59e0b' },
+    { id: 'transport', name: '交通',     icon: '✈️', color: '#3b82f6' },
+    { id: 'taxi',      name: '打车',     icon: '🚕', color: '#f97316' },
+    { id: 'transit',   name: '公交地铁', icon: '🚇', color: '#06b6d4' },
+    { id: 'coach',     name: '大巴车',   icon: '🚌', color: '#84cc16' },
+    { id: 'train',     name: '高铁火车', icon: '🚄', color: '#6366f1' },
+    { id: 'stay',      name: '住宿',     icon: '🏨', color: '#8b5cf6' },
+    { id: 'food',      name: '餐饮',     icon: '🍜', color: '#f59e0b' },
     { id: 'ticket',    name: '门票娱乐', icon: '🎫', color: '#10b981' },
-    { id: 'shop',      name: '购物', icon: '🛍️', color: '#ec4899' },
-    { id: 'other',     name: '其他', icon: '📦', color: '#64748b' }
+    { id: 'shop',      name: '购物',     icon: '🛍️', color: '#ec4899' },
+    { id: 'other',     name: '其他',     icon: '🧾', color: '#64748b' }
   ];
   var CATMAP = {};
   CATS.forEach(function (c) { CATMAP[c.id] = c; });
 
+  /* 币种按「旅行常用度」排序，下拉里好找 */
   var CUR = {
-    CNY: { name: '人民币', symbol: '¥' }, USD: { name: '美元', symbol: '$' },
-    JPY: { name: '日元', symbol: 'JP¥' }, EUR: { name: '欧元', symbol: '€' },
-    GBP: { name: '英镑', symbol: '£' }, HKD: { name: '港币', symbol: 'HK$' },
-    KRW: { name: '韩元', symbol: '₩' }, THB: { name: '泰铢', symbol: '฿' },
-    SGD: { name: '新加坡元', symbol: 'S$' }, MYR: { name: '林吉特', symbol: 'RM' },
-    TWD: { name: '新台币', symbol: 'NT$' }, AUD: { name: '澳元', symbol: 'A$' },
-    VND: { name: '越南盾', symbol: '₫' }, IDR: { name: '印尼盾', symbol: 'Rp' }
+    CNY: { name: '人民币', symbol: '¥' },
+    JPY: { name: '日元', symbol: 'JP¥' },
+    USD: { name: '美元', symbol: '$' },
+    EUR: { name: '欧元', symbol: '€' },
+    THB: { name: '泰铢', symbol: '฿' },
+    KRW: { name: '韩元', symbol: '₩' },
+    HKD: { name: '港币', symbol: 'HK$' },
+    TWD: { name: '新台币', symbol: 'NT$' },
+    SGD: { name: '新加坡元', symbol: 'S$' },
+    MYR: { name: '林吉特', symbol: 'RM' },
+    VND: { name: '越南盾', symbol: '₫' },
+    IDR: { name: '印尼盾', symbol: 'Rp' },
+    PHP: { name: '菲律宾比索', symbol: '₱' },
+    GBP: { name: '英镑', symbol: '£' },
+    AUD: { name: '澳元', symbol: 'A$' },
+    CAD: { name: '加拿大元', symbol: 'C$' },
+    NZD: { name: '新西兰元', symbol: 'NZ$' },
+    CHF: { name: '瑞士法郎', symbol: 'CHF' },
+    MOP: { name: '澳门元', symbol: 'MOP$' },
+    AED: { name: '阿联酋迪拉姆', symbol: 'AED' },
+    TRY: { name: '土耳其里拉', symbol: '₺' },
+    RUB: { name: '俄罗斯卢布', symbol: '₽' },
+    INR: { name: '印度卢比', symbol: '₹' },
+    LKR: { name: '斯里兰卡卢比', symbol: 'Rs' },
+    EGP: { name: '埃及镑', symbol: 'E£' },
+    MXN: { name: '墨西哥比索', symbol: 'MX$' },
+    ZAR: { name: '南非兰特', symbol: 'R' }
   };
   var ZERO_DEC = ['JPY', 'KRW', 'VND', 'IDR'];
+
+  /* 参考汇率：1 单位外币 = ? 人民币（2026-10-15 中间价，用户可自行修改） */
+  var RATES = {
+    CNY: 1, USD: 6.7253, EUR: 7.5068, JPY: 0.042472, GBP: 8.8709,
+    HKD: 0.85702, MOP: 0.8317, TWD: 0.227, KRW: 0.004990, THB: 0.19939,
+    SGD: 5.2262, MYR: 1.6455, VND: 0.000278, IDR: 0.000439, PHP: 0.10627,
+    INR: 0.0826, LKR: 0.0235, AED: 1.827, TRY: 0.13589, RUB: 0.0885,
+    CHF: 8.0645, CAD: 4.718, AUD: 4.6794, NZD: 3.7593, MXN: 0.36356,
+    ZAR: 0.40468, EGP: 0.145
+  };
+
+  /* 目的地关键词 → 币种。输入或选择目的地后自动匹配 */
+  var DEST = [
+    { cur: 'JPY', label: '日本', keys: ['日本', '东京', '大阪', '京都', '奈良', '北海道', '冲绳', '福冈', '名古屋', '关西', '关东', '九州', '四国', '神户', '横滨', '箱根', '镰仓', '札幌', '长野', '金泽', '名古屋', '静冈'] },
+    { cur: 'KRW', label: '韩国', keys: ['韩国', '首尔', '釜山', '济州', '仁川', '大邱', '江原道'] },
+    { cur: 'THB', label: '泰国', keys: ['泰国', '曼谷', '清迈', '普吉', '芭提雅', '苏梅', '甲米', '清莱', '大城', '象岛'] },
+    { cur: 'SGD', label: '新加坡', keys: ['新加坡'] },
+    { cur: 'MYR', label: '马来西亚', keys: ['马来西亚', '吉隆坡', '沙巴', '槟城', '兰卡威', '马六甲', '亚庇'] },
+    { cur: 'IDR', label: '印尼', keys: ['印尼', '印度尼西亚', '巴厘岛', '雅加达', '龙目岛', '泗水', '日惹', '科莫多'] },
+    { cur: 'PHP', label: '菲律宾', keys: ['菲律宾', '马尼拉', '长滩', '宿务', '薄荷岛', '巴拉望', '爱妮岛'] },
+    { cur: 'VND', label: '越南', keys: ['越南', '河内', '胡志明', '岘港', '芽庄', '会安', '下龙湾', '富国岛', '大叻'] },
+    { cur: 'HKD', label: '中国香港', keys: ['香港', 'hong kong', 'hk'] },
+    { cur: 'MOP', label: '中国澳门', keys: ['澳门', 'macau', 'macao'] },
+    { cur: 'TWD', label: '中国台湾', keys: ['台湾', '台北', '高雄', '台中', '台南', '花莲', '垦丁', '九份', '台东'] },
+    { cur: 'USD', label: '美国', keys: ['美国', '纽约', '洛杉矶', '旧金山', '拉斯维加斯', '夏威夷', '关岛', '塞班', '西雅图', '波士顿', '华盛顿', '芝加哥', '迈阿密', '奥兰多', '圣地亚哥', '羚羊谷'] },
+    { cur: 'CAD', label: '加拿大', keys: ['加拿大', '温哥华', '多伦多', '蒙特利尔', '班夫', '渥太华', '卡尔加里', '魁北克'] },
+    { cur: 'GBP', label: '英国', keys: ['英国', '伦敦', '爱丁堡', '曼彻斯特', '牛津', '剑桥', '苏格兰', '利物浦'] },
+    { cur: 'EUR', label: '欧元区', keys: ['法国', '巴黎', '尼斯', '普罗旺斯', '意大利', '罗马', '米兰', '威尼斯', '佛罗伦萨', '德国', '柏林', '慕尼黑', '法兰克福', '西班牙', '马德里', '巴塞罗那', '葡萄牙', '里斯本', '波尔图', '荷兰', '阿姆斯特丹', '比利时', '布鲁塞尔', '奥地利', '维也纳', '希腊', '雅典', '圣托里尼', '芬兰', '赫尔辛基', '爱尔兰', '都柏林', '卢森堡', '欧洲', '申根', '摩纳哥'] },
+    { cur: 'CHF', label: '瑞士', keys: ['瑞士', '苏黎世', '日内瓦', '因特拉肯', '卢塞恩', '伯尔尼', '少女峰'] },
+    { cur: 'AUD', label: '澳大利亚', keys: ['澳大利亚', '澳洲', '悉尼', '墨尔本', '布里斯班', '黄金海岸', '珀斯', '凯恩斯', '塔斯马尼亚', '大堡礁'] },
+    { cur: 'NZD', label: '新西兰', keys: ['新西兰', '奥克兰', '皇后镇', '基督城', '惠灵顿', '但尼丁'] },
+    { cur: 'AED', label: '阿联酋', keys: ['迪拜', '阿联酋', '阿布扎比', '沙迦'] },
+    { cur: 'TRY', label: '土耳其', keys: ['土耳其', '伊斯坦布尔', '卡帕多奇亚', '安塔利亚', '棉花堡'] },
+    { cur: 'RUB', label: '俄罗斯', keys: ['俄罗斯', '莫斯科', '圣彼得堡', '海参崴', '符拉迪沃斯托克', '贝加尔湖'] },
+    { cur: 'INR', label: '印度', keys: ['印度', '新德里', '孟买', '德里', '斋普尔', '果阿'] },
+    { cur: 'LKR', label: '斯里兰卡', keys: ['斯里兰卡', '科伦坡', '康提', '加勒'] },
+    { cur: 'EGP', label: '埃及', keys: ['埃及', '开罗', '卢克索', '阿斯旺', '红海'] },
+    { cur: 'MXN', label: '墨西哥', keys: ['墨西哥', '坎昆', '墨西哥城', '图卢姆'] },
+    { cur: 'ZAR', label: '南非', keys: ['南非', '开普敦', '约翰内斯堡', '克鲁格'] }
+  ];
   var PALETTE = ['#3b6ef6', '#12b3a0', '#f59e0b', '#8b5cf6', '#ec4899', '#0ea5e9', '#ef4444', '#84cc16'];
 
   /* ---------------- 工具 ---------------- */
@@ -156,11 +221,27 @@
       '<rect width="24" height="24" rx="7" fill="#16a34a"/>' +
       '<text x="12" y="16.9" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" ' +
       'font-family="-apple-system,\'PingFang SC\',\'Hiragino Sans GB\',\'Microsoft YaHei\',sans-serif">¥</text>' +
+      '</svg>',
+
+    /* 微信：品牌绿 + 双气泡（小气泡用底色描边与大气泡分开） */
+    wechat: '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<rect width="24" height="24" rx="7" fill="#07C160"/>' +
+      '<ellipse cx="9.5" cy="9.6" rx="6.5" ry="5.5" fill="#fff"/>' +
+      '<path fill="#07C160" d="M9.5 15.1l-2.6 1.9.5-2.6z"/>' +
+      '<ellipse cx="16.1" cy="14.4" rx="4.8" ry="4" fill="#fff" stroke="#07C160" stroke-width="1.5"/>' +
+      '<path fill="#07C160" d="M13.4 17.9l-.4 2.2 2.3-1.6z"/>' +
+      '<circle cx="7.3" cy="8.6" r="1" fill="#07C160"/>' +
+      '<circle cx="11.7" cy="8.6" r="1" fill="#07C160"/>' +
+      '<circle cx="14.3" cy="13.4" r=".85" fill="#07C160"/>' +
+      '<circle cx="17.9" cy="13.4" r=".85" fill="#07C160"/>' +
       '</svg>'
   };
 
   /* 老数据里的 emoji 图标 → 新 logo */
-  var LEGACY_ICON = { pm_card: '@card', pm_alipay: '@alipay', pm_fund: '@fund', pm_cash: '@cash' };
+  var LEGACY_ICON = {
+    pm_card: '@card', pm_alipay: '@alipay', pm_wechat: '@wechat',
+    pm_fund: '@fund', pm_cash: '@cash'
+  };
 
   function payIconHTML(icon) {
     if (icon && icon.charAt(0) === '@') return PAY_LOGO[icon.slice(1)] || PAY_LOGO.card;
@@ -168,10 +249,34 @@
   }
   function isLogo(icon) { return !!icon && icon.charAt(0) === '@'; }
 
+  /* 按名称猜一个合适的图标：内置品牌 logo 优先，其次常见 emoji */
+  var PAY_GUESS = [
+    { k: ['微信', 'wechat', 'weixin', 'weixin pay'], icon: '@wechat' },
+    { k: ['支付宝', 'alipay', 'zhifubao'], icon: '@alipay' },
+    { k: ['信用卡', 'credit', 'visa', 'master', '万事达', '银联', 'unionpay', 'amex', '运通'], icon: '@card' },
+    { k: ['现金', 'cash'], icon: '@cash' },
+    { k: ['基金', 'fund'], icon: '@fund' },
+    { k: ['八达通', 'octopus', 'suica', 'icoca', 'pasmo', '西瓜卡', '交通卡', '公交卡'], icon: '🚇' },
+    { k: ['paypay', 'line pay', 'paypal', 'apple pay', 'google pay', '云闪付'], icon: '📱' },
+    { k: ['酒店', '押金', '预付', 'hotel'], icon: '🏨' },
+    { k: ['礼品卡', 'gift', '代金券', '券'], icon: '🎁' },
+    { k: ['银行', 'bank', '储蓄', '借记'], icon: '🏦' }
+  ];
+  function guessPayIcon(name) {
+    var s = String(name || '').toLowerCase().replace(/\s+/g, '');
+    for (var i = 0; i < PAY_GUESS.length; i++) {
+      for (var j = 0; j < PAY_GUESS[i].k.length; j++) {
+        if (s.indexOf(PAY_GUESS[i].k[j].replace(/\s+/g, '')) > -1) return PAY_GUESS[i].icon;
+      }
+    }
+    return '💳';
+  }
+
   function defaultPayMethods() {
     return [
       { id: 'pm_card', name: '信用卡', icon: '@card' },
       { id: 'pm_alipay', name: '支付宝', icon: '@alipay' },
+      { id: 'pm_wechat', name: '微信', icon: '@wechat' },
       { id: 'pm_fund', name: '旅游基金', icon: '@fund' },
       { id: 'pm_cash', name: '现金', icon: '@cash' }
     ];
@@ -191,7 +296,8 @@
           { id: 'A', name: '阿星', color: PALETTE[0] },
           { id: 'B', name: '小鹿', color: PALETTE[1] }
         ],
-        currencies: [{ code: 'CNY', rate: 1 }, { code: 'JPY', rate: 0.048 }],
+        currencies: [{ code: 'CNY', rate: 1 }, { code: 'JPY', rate: RATES.JPY }],
+        defaultCur: 'JPY',
         payMethods: defaultPayMethods()
       },
       expenses: [
@@ -200,7 +306,7 @@
         { id: 'demo3', date: d(3), time: '19:15', title: '和牛烧肉', cat: 'food', amount: 15800, currency: 'JPY', payer: 'B', participants: ['A', 'B'], splitMode: 'custom', shares: { A: 70, B: 30 }, payMethod: 'pm_cash', note: '小鹿多吃了两盘', createdAt: 3 },
         { id: 'demo4', date: d(2), time: '10:05', title: '环球影城门票', cat: 'ticket', amount: 17600, currency: 'JPY', payer: 'A', participants: ['A', 'B'], splitMode: 'equal', payMethod: 'pm_alipay', note: '', createdAt: 4 },
         { id: 'demo5', date: d(1), time: '16:30', title: '药妆采购', cat: 'shop', amount: 8900, currency: 'JPY', payer: 'B', participants: ['B'], splitMode: 'equal', payMethod: 'pm_alipay', note: '各买各的', createdAt: 5 },
-        { id: 'demo6', date: d(0), time: '11:50', title: '机场快线', cat: 'transport', amount: 320, currency: 'CNY', payer: 'B', participants: ['A', 'B'], splitMode: 'equal', payMethod: 'pm_fund', note: '', createdAt: 6 }
+        { id: 'demo6', date: d(0), time: '11:50', title: '机场快线', cat: 'train', amount: 320, currency: 'CNY', payer: 'B', participants: ['A', 'B'], splitMode: 'equal', payMethod: 'pm_fund', note: '', createdAt: 6 }
       ]
     };
   }
@@ -222,11 +328,26 @@
       if (LEGACY_ICON[p.id] && !isLogo(p.icon)) p.icon = LEGACY_ICON[p.id];
     });
 
+    /* 老账本补上「微信」：只补一次，用户自己删掉后不再加回来 */
+    if (!t.paySeeded) {
+      var hasW = t.payMethods.some(function (p) { return p.id === 'pm_wechat'; });
+      if (!hasW) {
+        var at = -1;
+        t.payMethods.forEach(function (p, i) { if (p.id === 'pm_alipay') at = i; });
+        var w = { id: 'pm_wechat', name: '微信', icon: '@wechat' };
+        if (at > -1) t.payMethods.splice(at + 1, 0, w);
+        else t.payMethods.push(w);
+      }
+      t.paySeeded = true;
+    }
+
     var ids = t.members.map(function (m) { return m.id; });
     s.expenses = (s.expenses || []).map(function (e) {
       var o = {};
       for (var k in e) if (Object.prototype.hasOwnProperty.call(e, k)) o[k] = e[k];
       if (o.time == null) o.time = '';
+      /* 分类必须命中内置表，否则归到「其他」（防止手改 JSON / 旧版本残留） */
+      if (!CATMAP[o.cat]) o.cat = 'other';
 
       if (!o.participants || !o.participants.length) {
         var a = ids[0], b = ids[1];
@@ -252,6 +373,14 @@
       return o;
     });
     s.version = 2;
+
+    /* 默认记账币种：老数据没有这个字段，优先用目的地币种，否则回退结算货币 */
+    var curCodes = (t.currencies || []).map(function (c) { return c.code; });
+    if (!t.defaultCur || curCodes.indexOf(t.defaultCur) === -1) {
+      var byDest = t.destination ? matchDest(t.destination) : [];
+      var guess = byDest.length && curCodes.indexOf(byDest[0].cur) > -1 ? byDest[0].cur : null;
+      t.defaultCur = guess || t.base || curCodes[0] || 'CNY';
+    }
     return s;
   }
 
@@ -715,11 +844,111 @@
       '上次导出：' + (last ? esc(last) : '<span style="color:#e5484d">还没导出过，建议备份一次</span>');
   }
 
+  /* ---------------- 目的地 → 币种 ---------------- */
+  /* 返回命中的目的地项，按关键词在文本里出现的先后排序 */
+  function matchDest(text) {
+    var s = String(text || '').trim().toLowerCase();
+    if (!s) return [];
+    var hits = [];
+    DEST.forEach(function (d) {
+      var best = -1;
+      d.keys.forEach(function (k) {
+        var p = s.indexOf(String(k).toLowerCase());
+        if (p > -1 && (best === -1 || p < best)) best = p;
+      });
+      if (best > -1) hits.push({ d: d, at: best });
+    });
+    hits.sort(function (a, b) { return a.at - b.at; });
+    return hits.map(function (x) { return x.d; });
+  }
+
+  /* 把某个目的地的币种套进「币种与汇率」，并设为记账默认币种 */
+  function applyDest(d, silent) {
+    if (!d || !CUR[d.cur]) return;
+    var t = state.trip;
+    var cur = d.cur;
+    var exist = null;
+    for (var i = 0; i < t.currencies.length; i++) {
+      if (t.currencies[i].code === cur) { exist = t.currencies[i]; break; }
+    }
+    var added = false;
+    if (!exist) {
+      t.currencies.push({ code: cur, rate: RATES[cur] || 1 });
+      added = true;
+    }
+    t.defaultCur = cur;
+    persist();
+    renderCurRows();
+    renderAll(true);
+    if (!silent) {
+      toast('已匹配 ' + d.label + ' · ' + cur + ' ' + CUR[cur].name +
+        (added ? '，参考汇率 ' + (RATES[cur] || 1) : ''));
+    }
+  }
+
+  function renderDestPop(list) {
+    var pop = $('destPop');
+    if (!pop) return;
+    if (!list || !list.length) { pop.className = 'dest-pop'; pop.innerHTML = ''; return; }
+    pop.innerHTML = list.slice(0, 6).map(function (d, i) {
+      return '<button class="dest-item" data-di="' + i + '">' +
+        '<span>' + esc(d.label) + '</span>' +
+        '<span class="dc">' + d.cur + ' ' + esc(CUR[d.cur].name) + '</span>' +
+        '</button>';
+    }).join('');
+    pop.className = 'dest-pop on';
+    Array.prototype.forEach.call(pop.querySelectorAll('[data-di]'), function (b) {
+      b.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
+      b.addEventListener('click', function () {
+        var d = list[Number(this.getAttribute('data-di'))];
+        applyDest(d);
+        pop.className = 'dest-pop';
+      });
+    });
+  }
+
+  function bindDestInput() {
+    var inp = $('sDest');
+    if (!inp) return;
+    var timer = null;
+
+    inp.addEventListener('input', function () {
+      var hits = matchDest(this.value);
+      renderDestPop(hits);
+      clearTimeout(timer);
+      /* 唯一命中时直接套用，省一步点击 */
+      if (hits.length === 1) {
+        timer = setTimeout(function () {
+          if (state.trip.defaultCur !== hits[0].cur) applyDest(hits[0]);
+        }, 600);
+      }
+    });
+
+    inp.addEventListener('focus', function () {
+      var hits = matchDest(this.value);
+      if (hits.length) renderDestPop(hits);
+    });
+
+    inp.addEventListener('blur', function () {
+      setTimeout(function () {
+        var pop = $('destPop');
+        if (pop) pop.className = 'dest-pop';
+      }, 160);
+      clearTimeout(timer);
+      var hits = matchDest(this.value);
+      if (hits.length === 1 && state.trip.defaultCur !== hits[0].cur) applyDest(hits[0], true);
+    });
+  }
+
   function renderCurRows() {
     var t = state.trip;
+    if (!t.defaultCur) t.defaultCur = t.base;
     $('curRows').innerHTML = t.currencies.map(function (c, i) {
       var isBase = c.code === t.base;
-      return '<div class="cur-row' + (isBase ? ' base' : '') + '">' +
+      var isDef = c.code === t.defaultCur;
+      return '<div class="cur-row' + (isBase ? ' base' : '') + (isDef ? ' def' : '') + '">' +
+        '<button class="pick' + (isDef ? ' on' : '') + '" data-def="' + i + '" ' +
+          'aria-label="设为默认记账币种" title="设为默认记账币种"></button>' +
         '<select data-c="' + i + '">' + Object.keys(CUR).map(function (k) {
           return '<option value="' + k + '"' + (k === c.code ? ' selected' : '') + '>' + k + ' ' + CUR[k].name + '</option>';
         }).join('') + '</select>' +
@@ -728,6 +957,22 @@
         '<button class="x" data-x="' + i + '"' + (isBase ? ' disabled style="opacity:.25"' : '') + '>✕</button>' +
         '</div>';
     }).join('');
+
+    var tip = $('defCurTip');
+    if (tip) tip.textContent = '默认 ' + (t.defaultCur || t.base);
+
+    Array.prototype.forEach.call($('curRows').querySelectorAll('[data-def]'), function (b) {
+      b.addEventListener('click', function () {
+        var i = Number(this.getAttribute('data-def'));
+        var code = state.trip.currencies[i].code;
+        if (state.trip.defaultCur === code) return;
+        state.trip.defaultCur = code;
+        persist();
+        renderCurRows();
+        toast('「记一笔」默认币种：' + code);
+      });
+    });
+
     Array.prototype.forEach.call($('curRows').querySelectorAll('[data-x]'), function (b) {
       b.addEventListener('click', function () {
         var i = Number(this.getAttribute('data-x'));
@@ -736,6 +981,8 @@
           toast('「' + code + '」已有记录，不能移除'); return;
         }
         state.trip.currencies.splice(i, 1);
+        if (state.trip.defaultCur === code) state.trip.defaultCur = state.trip.base;
+        persist();
         renderCurRows();
       });
     });
@@ -781,10 +1028,13 @@
     var rows = $('payRows').querySelectorAll('.pay-row');
     var out = [];
     Array.prototype.forEach.call(rows, function (r, i) {
+      var nm = (r.querySelector('input').value || '').trim() || ('方式' + (i + 1));
+      var cur = r.getAttribute('data-icon') || '💳';
       out.push({
         id: r.getAttribute('data-id') || uid('p'),
-        name: (r.querySelector('input').value || '').trim() || ('方式' + (i + 1)),
-        icon: r.getAttribute('data-icon') || '💳'
+        name: nm,
+        /* 还是默认 💳 时，跟着名字重新猜一个更贴切的图标 */
+        icon: cur === '💳' ? guessPayIcon(nm) : cur
       });
     });
     return out.length ? out : (state.trip.payMethods || defaultPayMethods());
@@ -800,6 +1050,20 @@
     t.members = readMembers();
     t.payMethods = readPayMethods();
 
+    /* 改名后图标若还是默认 💳，就地换成猜到的图标（不动输入框，避免失焦） */
+    Array.prototype.forEach.call($('payRows').querySelectorAll('.pay-row'), function (r, i) {
+      var pm = t.payMethods[i];
+      if (!pm) return;
+      if ((r.getAttribute('data-icon') || '💳') !== pm.icon) {
+        r.setAttribute('data-icon', pm.icon);
+        var pi = r.querySelector('.pi');
+        if (pi) {
+          pi.className = 'pi' + (isLogo(pm.icon) ? ' logo' : '');
+          pi.innerHTML = payIconHTML(pm.icon);
+        }
+      }
+    });
+
     var rows = $('curRows').querySelectorAll('.cur-row');
     var list = [];
     Array.prototype.forEach.call(rows, function (row) {
@@ -809,6 +1073,8 @@
     });
     if (!list.some(function (x) { return x.code === t.base; })) list.unshift({ code: t.base, rate: 1 });
     t.currencies = list;
+    /* 默认记账币种必须真实存在于币种表里 */
+    if (!list.some(function (x) { return x.code === t.defaultCur; })) t.defaultCur = t.base;
 
     persist();
     renderAll(true);
@@ -831,11 +1097,9 @@
   var formShares = {};
   var formPay = null;
 
+  /* 新建记录时的默认日期：始终取设备当前日期（不再被行程起止日期夹取） */
   function defaultDate() {
-    var t = todayStr(), s = state.trip.start, e = state.trip.end;
-    if (s && t < s) return s;
-    if (e && t > e) return e;
-    return t;
+    return todayStr();
   }
 
   function openSheet(id) {
@@ -901,7 +1165,8 @@
     sel.innerHTML = state.trip.currencies.map(function (c) {
       return '<option value="' + c.code + '">' + c.code + '</option>';
     }).join('');
-    var code = prefer || sel.value;
+    /* 新建时默认用「币种与汇率」里选定的默认币种；编辑时用该笔原币种 */
+    var code = prefer || state.trip.defaultCur || state.trip.base;
     var has = state.trip.currencies.some(function (c) { return c.code === code; });
     sel.value = has ? code : state.trip.base;
   }
@@ -1049,13 +1314,50 @@
           (logo ? '' : ' style="background:#f3f6fc;color:#475467;font-size:14px"') + '>' +
           payIconHTML(p.icon) + '</span>' +
         esc(p.name) + '</button>';
-    }).join('');
+    }).join('') +
+      '<button class="person pay-add" id="payAddBtn">＋ 新增方式</button>';
+
     Array.prototype.forEach.call($('payRow').querySelectorAll('[data-pay]'), function (b) {
       b.addEventListener('click', function () {
         formPay = this.getAttribute('data-pay');
         buildPayRow();
       });
     });
+    var add = $('payAddBtn');
+    if (add) {
+      add.addEventListener('click', function () {
+        var box = $('payAddBox');
+        box.classList.add('on');
+        var inp = $('payAddInput');
+        inp.value = '';
+        setTimeout(function () { inp.focus(); }, 60);
+      });
+    }
+  }
+
+  /* 在「记一笔」里直接新增支付方式 */
+  function addPayInline() {
+    var inp = $('payAddInput');
+    var name = (inp.value || '').trim();
+    if (!name) { toast('请输入支付方式名称'); inp.focus(); return; }
+    var dup = (state.trip.payMethods || []).filter(function (p) { return p.name === name; })[0];
+    if (dup) {
+      formPay = dup.id;
+      $('payAddBox').classList.remove('on');
+      inp.value = '';
+      buildPayRow();
+      toast('已有「' + name + '」，已选中');
+      return;
+    }
+    var p = { id: uid('p'), name: name, icon: guessPayIcon(name) };
+    state.trip.payMethods = state.trip.payMethods || [];
+    state.trip.payMethods.push(p);
+    formPay = p.id;
+    persist();
+    $('payAddBox').classList.remove('on');
+    inp.value = '';
+    buildPayRow();
+    toast('已添加「' + name + '」');
   }
 
   function updateConv() {
@@ -1451,8 +1753,7 @@
     } catch (e) { toast('导出失败：' + e.message); }
   }
 
-  function exportCsv() {
-    if (!state.expenses.length) { toast('还没有记录可以导出'); return; }
+  function buildCsv() {
     var head = ['日期', '时间', '项目', '分类', '币种', '金额', '汇率', '折合' + state.trip.base, '付款人', '支付方式', '分摊方式'];
     members().forEach(function (m) { head.push(m.name + '承担'); });
     head.push('备注');
@@ -1481,8 +1782,12 @@
     lines.push(['结算', '', '', '', '', '', '', '', '', '', '', '', plan.length
       ? plan.map(function (p) { return memberName(p.from) + '→' + memberName(p.to) + ' ' + money(p.amount); }).join('；')
       : '已结清'].join(','));
+    return lines.join('\r\n');
+  }
 
-    download(new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }),
+  function exportCsv() {
+    if (!state.expenses.length) { toast('还没有记录可以导出'); return; }
+    download(new Blob(['\ufeff' + buildCsv()], { type: 'text/csv;charset=utf-8' }),
       safeName(state.trip.name) + '_' + fileStamp() + '.csv');
     toast('CSV 已导出');
   }
@@ -1535,8 +1840,16 @@
     $('fCurrency').addEventListener('change', updateConv);
     $('fTitle').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveSheet(); } });
 
+    /* 「记一笔」内联新增支付方式 */
+    $('payAddOk').addEventListener('click', addPayInline);
+    $('payAddInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); addPayInline(); }
+    });
+
     $('btnCopy').addEventListener('click', function () { copyText(settlementText()); });
     $('heroSettle').addEventListener('click', function () { switchView('settle'); });
+
+    bindDestInput();
 
     $('btnXlsx').addEventListener('click', exportXlsx);
     $('btnCsv').addEventListener('click', exportCsv);
@@ -1567,7 +1880,7 @@
       var used = state.trip.currencies.map(function (c) { return c.code; });
       var pick = Object.keys(CUR).filter(function (k) { return used.indexOf(k) === -1; })[0];
       if (!pick) { toast('常用币种都加过了'); return; }
-      state.trip.currencies.push({ code: pick, rate: 1 });
+      state.trip.currencies.push({ code: pick, rate: RATES[pick] || 1 });
       renderCurRows();
     });
 
@@ -1589,11 +1902,28 @@
     });
 
     $('sBase').addEventListener('change', function () {
-      state.trip.base = this.value;
-      var found = state.trip.currencies.some(function (c) { return c.code === state.trip.base; });
-      if (!found) state.trip.currencies.push({ code: state.trip.base, rate: 1 });
-      state.trip.currencies.forEach(function (c) { if (c.code === state.trip.base) c.rate = 1; });
+      var oldBase = state.trip.base;
+      var old = {};
+      state.trip.currencies.forEach(function (c) { old[c.code] = Number(c.rate) || 1; });
+      var nb = this.value;
+      if (!old[nb]) old[nb] = RATES[nb] || 1;
+      if (!(old[oldBase] > 0)) old[oldBase] = 1;
+
+      state.trip.base = nb;
+      var found = state.trip.currencies.some(function (c) { return c.code === nb; });
+      if (!found) state.trip.currencies.push({ code: nb, rate: 1 });
+
+      /* 汇率口径是「1 外币 = ? 结算货币」，换结算货币要把所有汇率整体换算一遍 */
+      state.trip.currencies.forEach(function (c) {
+        c.rate = c.code === nb ? 1 : Math.round((old[c.code] || 1) / old[nb] * 1000000) / 1000000;
+      });
+
+      if (!state.trip.currencies.some(function (c) { return c.code === state.trip.defaultCur; })) {
+        state.trip.defaultCur = nb;
+      }
+      persist();
       renderCurRows();
+      renderAll(true);
     });
 
     $('btnSaveSettings').addEventListener('click', function () {
@@ -1649,9 +1979,21 @@
   window.__app = {
     get state() { return state; },
     buildXlsx: buildXlsx,
+    buildCsv: buildCsv,
     summarize: summarize,
     settlePlan: settlePlan,
     switchView: switchView,
-    payLogos: function () { return PAY_LOGO; }
+    payLogos: function () { return PAY_LOGO; },
+    /* 只读调试接口：供自动化校验用，不影响业务逻辑 */
+    cats: function () { return CATS.slice(); },
+    bears: bears,
+    balances: balances,
+    expBase: expBase,
+    rateOf: rateOf,
+    participantsOf: participantsOf,
+    days: days,
+    openSheet: openSheet,
+    closeSheet: closeSheet,
+    saveSheet: saveSheet
   };
 })();

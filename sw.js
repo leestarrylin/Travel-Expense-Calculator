@@ -1,7 +1,9 @@
 /* 旅行记账 · 离线缓存
+   v5：分类扩到 10 个（新增打车/公交地铁/大巴车/高铁火车），缓存版本 +1。
+   v4：新增「内联新增支付方式」与微信 logo，缓存版本 +1 强制刷新。
    v3：把 app.js / styles.css 纳入预缓存；代码类资源改为「网络优先」，
        保证以后更新能生效，离线时仍可用缓存。 */
-var CACHE = 'travel-split-v3';
+var CACHE = 'travel-split-v5';
 var ASSETS = [
   './',
   './index.html',
