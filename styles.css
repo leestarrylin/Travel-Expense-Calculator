@@ -228,16 +228,53 @@
   .tab.on svg{stroke-width:2.2}
   .fab-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
             height:0;z-index:45;pointer-events:none}
+  /* 主按钮：圆形球面。高光与暗部全部用径向渐变连续过渡，避免出现贴片接缝 */
   .fab{
-    position:absolute;right:18px;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);
-    width:56px;height:56px;border-radius:19px;border:0;pointer-events:auto;
-    background:linear-gradient(135deg,#4b7bfa,#3b6ef6);color:#fff;font-size:26px;font-weight:300;
-    display:grid;place-items:center;line-height:0;padding-bottom:3px;
-    box-shadow:0 12px 26px -10px rgba(59,110,246,.85),0 2px 6px rgba(16,24,40,.12);
-    transition:transform .16s,opacity .2s;
+    position:absolute;
+    right:calc(14px + env(safe-area-inset-right));
+    bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 18px);
+    width:60px;height:60px;border-radius:50%;border:0;padding:0;
+    pointer-events:auto;display:grid;place-items:center;color:#fff;
+    background:
+      /* 顶部镜面高光：收得紧，读作反光而不是泛白 */
+      radial-gradient(40% 27% at 50% 9%, rgba(255,255,255,.60) 0%, rgba(255,255,255,.16) 44%, rgba(255,255,255,0) 76%),
+      /* 球体本身的明暗 */
+      radial-gradient(122% 122% at 50% 12%, #7ba0ff 0%, #517cf8 32%, #3966ee 58%, #2b4dd4 84%, #2340b8 100%);
+    box-shadow:
+      /* 顶缘一线反光，底缘轻压，勾出球体边缘 */
+      inset 0 1px 0 rgba(255,255,255,.52),
+      inset 0 -2px 5px rgba(9,26,88,.30),
+      inset 0 -1px 1px rgba(255,255,255,.12),
+      /* 贴地接触阴影（短、实） */
+      0 1px 1.5px rgba(12,26,74,.22),
+      0 4px 8px -2px rgba(24,52,140,.28),
+      /* 环境投影（长、虚） */
+      0 14px 24px -12px rgba(30,64,175,.55),
+      0 28px 44px -24px rgba(23,43,99,.50);
+    transition:transform .18s cubic-bezier(.34,1.4,.64,1),box-shadow .2s ease,opacity .2s;
+    -webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none;user-select:none;
   }
-  .fab:active{transform:scale(.92)}
-  .fab.hide{opacity:0;transform:scale(.6);pointer-events:none}
+  .fab-plus{
+    position:relative;width:26px;height:26px;display:block;
+    filter:drop-shadow(0 1px 1.5px rgba(10,28,90,.48));
+  }
+  /* 按下：整体下沉、高光减弱、投影收紧 */
+  .fab:active{
+    transform:translateY(2.5px) scale(.972);
+    background:
+      radial-gradient(60% 46% at 50% 4%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.10) 38%, rgba(255,255,255,0) 76%),
+      radial-gradient(132% 130% at 50% 12%, #6f93f7 0%, #4a75f0 34%, #3360e4 60%, #2848c6 85%, #2039a8 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.38),
+      inset 0 4px 10px -2px rgba(8,22,70,.45),
+      inset 0 -1px 3px rgba(9,26,88,.30),
+      0 1px 1px rgba(12,26,74,.20),
+      0 2px 4px -1px rgba(24,52,140,.26),
+      0 7px 14px -10px rgba(30,64,175,.48),
+      0 14px 22px -18px rgba(23,43,99,.45);
+  }
+  .fab.hide{opacity:0;transform:scale(.6) translateY(8px);pointer-events:none}
 
   /* ---------- 记账面板 ---------- */
   .sheet{
